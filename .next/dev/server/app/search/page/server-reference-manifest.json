@@ -1,0 +1,20 @@
+{
+  "node": {
+    "60dd55a9786c773af334114db0467ef29f90e65cfd": {
+      "workers": {
+        "app/search/page": {
+          "moduleId": "[project]/.next-internal/server/app/search/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/anime.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "searchAnimeAction",
+          "filename": "app/actions/anime.ts"
+        }
+      },
+      "layer": {
+        "app/search/page": "action-browser"
+      },
+      "exportedName": "searchAnimeAction",
+      "filename": "app/actions/anime.ts"
+    }
+  },
+  "edge": {}
+}
