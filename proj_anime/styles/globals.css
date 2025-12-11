@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Botão da Logo */
+.logo-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  border: 2px solid #1e88e5;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(30, 136, 229, 0.2);
+}
+
+.logo-button:hover {
+  background: rgba(30, 136, 229, 0.95);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: bold;
+  background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #1E88E5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .logo-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    top: 15px;
+    left: 15px;
+  }
+  
+  .logo-text {
+    font-size: 18px;
+  }
+}
