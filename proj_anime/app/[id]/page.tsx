@@ -115,41 +115,6 @@ const AnimeDetail = () => {
   return (
     <>
       <div style={pageBackgroundStyle} />
-      
-      {/* Botão "Voltar para Pesquisa" no LADO DIREITO */}
-      <button
-        onClick={() => router.push('/search')}
-        style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px", // Mudei de left para right
-          zIndex: 1000,
-          padding: "10px 20px",
-          background: "rgba(0, 0, 0, 0.8)",
-          color: "white",
-          border: "none",
-          borderRadius: "8px",
-          cursor: "pointer",
-          fontWeight: "bold",
-          fontSize: "16px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          transition: "all 0.3s",
-          border: "2px solid #1e88e5"
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)";
-          e.currentTarget.style.transform = "scale(1.05)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(0, 0, 0, 0.8)";
-          e.currentTarget.style.transform = "scale(1)";
-        }}
-      >
-        <span>Voltar para Pesquisa</span>
-        <span style={{ fontSize: "20px" }}>→</span> {/* Mudei a seta */}
-      </button>
 
       <div style={contentStyle}>
         <h1 style={{ 
@@ -218,6 +183,7 @@ const AnimeDetail = () => {
             <p><strong>Sinopse:</strong> {anime.synopsis || "Sinopse não disponível"}</p>
           </div>
 
+          {/* BOTÕES ORIGINAIS - TODOS MANTIDOS */}
           <div style={{ 
             display: "flex", 
             gap: 15, 
@@ -247,7 +213,7 @@ const AnimeDetail = () => {
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                👥 Ver Personagens
+                 Ver Personagens
               </button>
             </Link>
             
@@ -272,7 +238,7 @@ const AnimeDetail = () => {
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                🎬 Ver Staff
+                 Ver Staff
               </button>
             </Link>
             
@@ -297,7 +263,7 @@ const AnimeDetail = () => {
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                📺 Ver Vídeos
+                 Ver Vídeos
               </button>
             </Link>
           </div>

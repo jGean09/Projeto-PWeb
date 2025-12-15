@@ -1,12 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function SearchBox({ onSearch }) {
-  const [term, setTerm] = useState("");
+export default function SearchBox({ onSearch, initialValue = "" }) {
+  const [term, setTerm] = useState(initialValue);
+
+  // Atualiza o termo quando initialValue muda (como quando limpa a busca)
+  useEffect(() => {
+    setTerm(initialValue);
+  }, [initialValue]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    onSearch(term);
+    if (term.trim()) {
+      onSearch(term);
+    }
   }
 
   return (
@@ -14,18 +21,18 @@ export default function SearchBox({ onSearch }) {
       <input
         value={term}
         onChange={e => setTerm(e.target.value)}
-        placeholder="Buscar anime..."
+        placeholder="🔍 Buscar anime..."
         style={{
-          padding: "8px",
-          width: "250px",
+          padding: "12px 20px",
+          width: "100%",
           marginRight: "10px",
-          border: "1px solid #ccc"
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          background: "rgba(0, 0, 0, 0.7)",
+          color: "white",
+          borderRadius: "10px",
+          fontSize: "16px"
         }}
       />
-
-      <button type="submit">
-        Buscar
-      </button>
     </form>
   );
 }
