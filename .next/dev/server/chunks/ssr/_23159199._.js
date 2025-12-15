@@ -175,7 +175,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navi
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$SearchBox$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/components/SearchBox.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$AnimeCard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/components/AnimeCard.tsx [app-ssr] (ecmascript)");
 (()=>{
-    const e = new Error("Cannot find module '../../actions/anime'");
+    const e = new Error("Cannot find module '../../../hooks/useAnimeList'");
     e.code = 'MODULE_NOT_FOUND';
     throw e;
 })();
@@ -189,47 +189,45 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$AnimeCa
 ;
 function Page() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
-    const [items, setItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
     const [totalPages, setTotalPages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
     const [term, setTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
-    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [showBackButton, setShowBackButton] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    async function loadItems(searchTerm, page) {
-        if (loading) return;
-        setLoading(true);
-        try {
-            const result = await searchAnimeAction(searchTerm, page);
-            setItems(result.data || []);
-            setTotalPages(result.pagination?.last_visible_page || 1);
-            setCurrentPage(result.pagination?.current_page || 1);
-            if (searchTerm && searchTerm.trim() !== "") {
-                localStorage.setItem("lastAnimeSearch", searchTerm);
-                setShowBackButton(true);
-            }
-        } catch (error) {
-            console.error("Erro na busca:", error);
-            setItems([]);
-        } finally{
-            setLoading(false);
-        }
-    }
+    const { items, loadMore, search, loading, finished, mode, setListMode, searchTerm, searchMode } = useAnimeList();
+    const [displayItems, setDisplayItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const pageBackgroundStyle = {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundImage: "url('/scenario.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        zIndex: -1
+    };
+    const contentStyle = {
+        position: "relative",
+        zIndex: 1,
+        padding: "20px",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
+    };
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        setDisplayItems(items);
+    }, [
+        items
+    ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const urlParams = new URLSearchParams(window.location.search);
         const urlQuery = urlParams.get('q');
         if (urlQuery && urlQuery.trim() !== "") {
             setTerm(urlQuery);
             setShowBackButton(true);
-            loadItems(urlQuery, 1);
-        } else {
-            const savedTerm = localStorage.getItem("lastAnimeSearch");
-            if (savedTerm && savedTerm.trim() !== "") {
-                setTerm(savedTerm);
-                setShowBackButton(true);
-                loadItems(savedTerm, 1);
-            } else {
-                loadItems("", 1);
-            }
+            search(urlQuery);
         }
     }, []);
     function handleSearch(newTerm) {
@@ -238,603 +236,537 @@ function Page() {
         setTotalPages(1);
         if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
         ;
-        loadItems(newTerm, 1);
-    }
-    function goToPage(page) {
-        if (page < 1 || page > totalPages || loading) return;
-        setCurrentPage(page);
-        loadItems(term, page);
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        search(newTerm);
+        setShowBackButton(true);
     }
     function handleClearSearch() {
         setTerm("");
         setCurrentPage(1);
-        setItems([]);
+        setDisplayItems([]);
         setTotalPages(1);
         setShowBackButton(false);
         localStorage.removeItem("lastAnimeSearch");
-        loadItems("", 1);
+        search("");
     }
-    function getPageNumbers() {
-        const pages = [];
-        const maxPagesToShow = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-        if (endPage - startPage + 1 < maxPagesToShow) {
-            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    // Carrega mais quando chega no final
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const handleScroll = ()=>{
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                if (!loading && !finished) {
+                    loadMore();
+                }
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return ()=>window.removeEventListener('scroll', handleScroll);
+    }, [
+        loading,
+        finished,
+        loadMore
+    ]);
+    // Títulos dos modos
+    const getModeTitle = ()=>{
+        if (searchMode) return `Busca: ${searchTerm}`;
+        switch(mode){
+            case 'top':
+                return "Top Animes";
+            case 'upcoming':
+                return "Próximos Animes";
+            case 'season':
+            default:
+                return "Animes da Temporada";
         }
-        for(let i = startPage; i <= endPage; i++){
-            pages.push(i);
-        }
-        return pages;
-    }
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        style: {
-            width: "100vw",
-            minHeight: "100vh",
-            backgroundImage: "url('/scenario.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            padding: 20,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-        },
-        className: "jsx-d732791046adfab6",
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    width: "100%",
-                    maxWidth: "1000px",
-                    marginBottom: "20px"
-                },
-                className: "jsx-d732791046adfab6",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                    onClick: ()=>router.push('/'),
-                    style: {
-                        padding: "10px 20px",
-                        background: "rgba(0, 0, 0, 0.6)",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        transition: "all 0.3s",
-                        border: "1px solid #4ECDC4"
-                    },
-                    className: "jsx-d732791046adfab6",
-                    children: "Voltar para Home"
-                }, void 0, false, {
-                    fileName: "[project]/app/search/page.tsx",
-                    lineNumber: 135,
-                    columnNumber: 9
-                }, this)
+                style: pageBackgroundStyle
             }, void 0, false, {
                 fileName: "[project]/app/search/page.tsx",
-                lineNumber: 134,
+                lineNumber: 131,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                style: {
-                    color: "white",
-                    marginBottom: 20
-                },
-                className: "jsx-d732791046adfab6",
-                children: "Buscar Animes"
-            }, void 0, false, {
-                fileName: "[project]/app/search/page.tsx",
-                lineNumber: 157,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$SearchBox$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                onSearch: handleSearch
-            }, void 0, false, {
-                fileName: "[project]/app/search/page.tsx",
-                lineNumber: 159,
-                columnNumber: 7
-            }, this),
-            term && term.trim() !== "" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    width: "100%",
-                    maxWidth: "1000px",
-                    background: "rgba(0, 0, 0, 0.8)",
-                    borderRadius: "10px",
-                    padding: "15px 20px",
-                    marginBottom: "20px",
-                    marginTop: "20px",
-                    border: "2px solid #1e88e5",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: "10px"
-                },
-                className: "jsx-d732791046adfab6",
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: contentStyle,
+                className: "jsx-7a90291f0de70b21",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                         style: {
-                            color: "white"
+                            color: "white",
+                            marginBottom: 20
                         },
-                        className: "jsx-d732791046adfab6",
+                        className: "jsx-7a90291f0de70b21",
+                        children: getModeTitle()
+                    }, void 0, false, {
+                        fileName: "[project]/app/search/page.tsx",
+                        lineNumber: 134,
+                        columnNumber: 9
+                    }, this),
+                    !searchMode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            display: "flex",
+                            gap: "10px",
+                            marginBottom: "30px",
+                            flexWrap: "wrap",
+                            justifyContent: "center"
+                        },
+                        className: "jsx-7a90291f0de70b21",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>setListMode('season'),
+                                style: {
+                                    padding: "10px 20px",
+                                    background: mode === 'season' ? "#1e88e5" : "rgba(255, 255, 255, 0.1)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    fontSize: "14px",
+                                    transition: "all 0.3s"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "🎬 Temporada"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 145,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>setListMode('top'),
+                                style: {
+                                    padding: "10px 20px",
+                                    background: mode === 'top' ? "#1e88e5" : "rgba(255, 255, 255, 0.1)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    fontSize: "14px",
+                                    transition: "all 0.3s"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "⭐ Top Animes"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 161,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>setListMode('upcoming'),
+                                style: {
+                                    padding: "10px 20px",
+                                    background: mode === 'upcoming' ? "#1e88e5" : "rgba(255, 255, 255, 0.1)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    fontSize: "14px",
+                                    transition: "all 0.3s"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "📅 Próximos"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 177,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/search/page.tsx",
+                        lineNumber: 138,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$SearchBox$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        onSearch: handleSearch
+                    }, void 0, false, {
+                        fileName: "[project]/app/search/page.tsx",
+                        lineNumber: 196,
+                        columnNumber: 9
+                    }, this),
+                    searchMode && term && term.trim() !== "" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            width: "100%",
+                            maxWidth: "1000px",
+                            background: "rgba(0, 0, 0, 0.8)",
+                            borderRadius: "10px",
+                            padding: "15px 20px",
+                            marginBottom: "20px",
+                            marginTop: "20px",
+                            border: "2px solid #1e88e5",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            flexWrap: "wrap",
+                            gap: "10px"
+                        },
+                        className: "jsx-7a90291f0de70b21",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "10px",
-                                    marginBottom: "5px"
+                                    color: "white"
                                 },
-                                className: "jsx-d732791046adfab6",
+                                className: "jsx-7a90291f0de70b21",
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
-                                            fontSize: "20px"
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                            marginBottom: "5px"
                                         },
-                                        className: "jsx-d732791046adfab6"
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 184,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            fontSize: "16px",
-                                            fontWeight: "bold"
-                                        },
-                                        className: "jsx-d732791046adfab6",
+                                        className: "jsx-7a90291f0de70b21",
                                         children: [
-                                            "Resultados para: ",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 style: {
-                                                    color: "#90caf9"
+                                                    fontSize: "20px"
                                                 },
-                                                className: "jsx-d732791046adfab6",
-                                                children: term
+                                                className: "jsx-7a90291f0de70b21"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/search/page.tsx",
-                                                lineNumber: 186,
-                                                columnNumber: 34
+                                                lineNumber: 221,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                style: {
+                                                    fontSize: "16px",
+                                                    fontWeight: "bold"
+                                                },
+                                                className: "jsx-7a90291f0de70b21",
+                                                children: [
+                                                    "Resultados para: ",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        style: {
+                                                            color: "#90caf9"
+                                                        },
+                                                        className: "jsx-7a90291f0de70b21",
+                                                        children: term
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/search/page.tsx",
+                                                        lineNumber: 223,
+                                                        columnNumber: 36
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/search/page.tsx",
+                                                lineNumber: 222,
+                                                columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 185,
+                                        lineNumber: 215,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            fontSize: "14px",
+                                            color: "#aaa",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px"
+                                        },
+                                        className: "jsx-7a90291f0de70b21",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "jsx-7a90291f0de70b21",
+                                                children: [
+                                                    displayItems.length,
+                                                    " animes carregados"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/search/page.tsx",
+                                                lineNumber: 233,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                style: {
+                                                    fontSize: "11px",
+                                                    background: "rgba(255, 107, 107, 0.2)",
+                                                    padding: "2px 8px",
+                                                    borderRadius: "4px",
+                                                    color: "#FF6B6B"
+                                                },
+                                                className: "jsx-7a90291f0de70b21",
+                                                children: "Filtro: Conteúdo adulto removido"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/search/page.tsx",
+                                                lineNumber: 234,
+                                                columnNumber: 17
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/app/search/page.tsx",
+                                        lineNumber: 226,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/search/page.tsx",
-                                lineNumber: 178,
+                                lineNumber: 214,
                                 columnNumber: 13
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: handleClearSearch,
                                 style: {
+                                    padding: "8px 16px",
+                                    background: "#ff4444",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
                                     fontSize: "14px",
-                                    color: "#aaa",
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: "10px"
+                                    gap: "5px",
+                                    transition: "all 0.3s"
                                 },
-                                className: "jsx-d732791046adfab6",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "jsx-d732791046adfab6",
-                                        children: [
-                                            "Página ",
-                                            currentPage,
-                                            " de ",
-                                            totalPages
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 196,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "jsx-d732791046adfab6"
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 197,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "jsx-d732791046adfab6",
-                                        children: [
-                                            items.length,
-                                            " animes nesta página"
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 198,
-                                        columnNumber: 15
-                                    }, this)
-                                ]
-                            }, void 0, true, {
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Limpar Busca"
+                            }, void 0, false, {
                                 fileName: "[project]/app/search/page.tsx",
-                                lineNumber: 189,
+                                lineNumber: 246,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 177,
+                        lineNumber: 199,
                         columnNumber: 11
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        onClick: handleClearSearch,
+                    loading && displayItems.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
-                            padding: "8px 16px",
-                            background: "#ff4444",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                            fontSize: "14px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "5px",
-                            transition: "all 0.3s"
+                            marginTop: 40,
+                            textAlign: "center"
                         },
-                        className: "jsx-d732791046adfab6",
-                        children: "Limpar Busca"
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 202,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/app/search/page.tsx",
-                lineNumber: 162,
-                columnNumber: 9
-            }, this),
-            loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    marginTop: 40,
-                    textAlign: "center"
-                },
-                className: "jsx-d732791046adfab6",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            width: "50px",
-                            height: "50px",
-                            border: "5px solid rgba(255,255,255,0.1)",
-                            borderTop: "5px solid #1e88e5",
-                            borderRadius: "50%",
-                            margin: "0 auto 15px",
-                            animation: "spin 1s linear infinite"
-                        },
-                        className: "jsx-d732791046adfab6"
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 226,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        style: {
-                            color: "white"
-                        },
-                        className: "jsx-d732791046adfab6",
-                        children: "Carregando animes..."
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 235,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/app/search/page.tsx",
-                lineNumber: 225,
-                columnNumber: 9
-            }, this),
-            !loading && items.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-                            gap: 20,
-                            width: "100%",
-                            maxWidth: 1000,
-                            marginTop: "20px"
-                        },
-                        className: "jsx-d732791046adfab6",
-                        children: items.map((anime)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                onClick: ()=>{
-                                    localStorage.setItem("lastAnimeSearch", term);
-                                    router.push(`/${anime.mal_id}`);
-                                },
-                                style: {
-                                    cursor: "pointer"
-                                },
-                                className: "jsx-d732791046adfab6",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$AnimeCard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                    anime: anime
-                                }, void 0, false, {
-                                    fileName: "[project]/app/search/page.tsx",
-                                    lineNumber: 260,
-                                    columnNumber: 17
-                                }, this)
-                            }, anime.mal_id, false, {
-                                fileName: "[project]/app/search/page.tsx",
-                                lineNumber: 252,
-                                columnNumber: 15
-                            }, this))
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 241,
-                        columnNumber: 11
-                    }, this),
-                    totalPages > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        style: {
-                            marginTop: "40px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "10px",
-                            flexWrap: "wrap"
-                        },
-                        className: "jsx-d732791046adfab6",
+                        className: "jsx-7a90291f0de70b21",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>goToPage(currentPage - 1),
-                                disabled: currentPage === 1 || loading,
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
-                                    padding: "10px 20px",
-                                    background: currentPage === 1 ? "#555" : "#1e88e5",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "6px",
-                                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                                    fontWeight: "bold",
-                                    fontSize: "16px",
-                                    opacity: currentPage === 1 ? 0.5 : 1
+                                    width: "50px",
+                                    height: "50px",
+                                    border: "5px solid rgba(255,255,255,0.1)",
+                                    borderTop: "5px solid #1e88e5",
+                                    borderRadius: "50%",
+                                    margin: "0 auto 15px",
+                                    animation: "spin 1s linear infinite"
                                 },
-                                className: "jsx-d732791046adfab6",
-                                children: "Anterior"
+                                className: "jsx-7a90291f0de70b21"
                             }, void 0, false, {
                                 fileName: "[project]/app/search/page.tsx",
-                                lineNumber: 274,
-                                columnNumber: 15
+                                lineNumber: 270,
+                                columnNumber: 13
                             }, this),
-                            currentPage > 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        onClick: ()=>goToPage(1),
-                                        style: {
-                                            padding: "10px 16px",
-                                            background: "rgba(255, 255, 255, 0.1)",
-                                            color: "white",
-                                            border: "none",
-                                            borderRadius: "6px",
-                                            cursor: "pointer",
-                                            fontWeight: "bold"
-                                        },
-                                        className: "jsx-d732791046adfab6",
-                                        children: "1"
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 294,
-                                        columnNumber: 19
-                                    }, this),
-                                    currentPage > 4 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            color: "white"
-                                        },
-                                        className: "jsx-d732791046adfab6",
-                                        children: "..."
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 308,
-                                        columnNumber: 39
-                                    }, this)
-                                ]
-                            }, void 0, true),
-                            getPageNumbers().map((pageNum)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>goToPage(pageNum),
-                                    style: {
-                                        padding: "10px 16px",
-                                        background: currentPage === pageNum ? "#4ECDC4" : "rgba(255, 255, 255, 0.1)",
-                                        color: "white",
-                                        border: currentPage === pageNum ? "2px solid #4ECDC4" : "none",
-                                        borderRadius: "6px",
-                                        cursor: "pointer",
-                                        fontWeight: "bold",
-                                        minWidth: "45px"
-                                    },
-                                    className: "jsx-d732791046adfab6",
-                                    children: pageNum
-                                }, pageNum, false, {
-                                    fileName: "[project]/app/search/page.tsx",
-                                    lineNumber: 313,
-                                    columnNumber: 17
-                                }, this)),
-                            currentPage < totalPages - 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
-                                children: [
-                                    currentPage < totalPages - 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            color: "white"
-                                        },
-                                        className: "jsx-d732791046adfab6",
-                                        children: "..."
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 333,
-                                        columnNumber: 52
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        onClick: ()=>goToPage(totalPages),
-                                        style: {
-                                            padding: "10px 16px",
-                                            background: "rgba(255, 255, 255, 0.1)",
-                                            color: "white",
-                                            border: "none",
-                                            borderRadius: "6px",
-                                            cursor: "pointer",
-                                            fontWeight: "bold"
-                                        },
-                                        className: "jsx-d732791046adfab6",
-                                        children: totalPages
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/search/page.tsx",
-                                        lineNumber: 334,
-                                        columnNumber: 19
-                                    }, this)
-                                ]
-                            }, void 0, true),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>goToPage(currentPage + 1),
-                                disabled: currentPage === totalPages || loading,
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 style: {
-                                    padding: "10px 20px",
-                                    background: currentPage === totalPages ? "#555" : "#1e88e5",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "6px",
-                                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                                    fontWeight: "bold",
-                                    fontSize: "16px",
-                                    opacity: currentPage === totalPages ? 0.5 : 1
+                                    color: "white"
                                 },
-                                className: "jsx-d732791046adfab6",
-                                children: "Próxima"
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Carregando animes..."
                             }, void 0, false, {
                                 fileName: "[project]/app/search/page.tsx",
-                                lineNumber: 351,
-                                columnNumber: 15
+                                lineNumber: 279,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 266,
-                        columnNumber: 13
-                    }, this)
-                ]
-            }, void 0, true),
-            !loading && items.length === 0 && term && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    marginTop: 40,
-                    padding: 30,
-                    background: "rgba(0, 0, 0, 0.7)",
-                    borderRadius: "12px",
-                    textAlign: "center",
-                    maxWidth: "600px",
-                    width: "100%"
-                },
-                className: "jsx-d732791046adfab6",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                        style: {
-                            color: "white",
-                            marginBottom: "10px"
-                        },
-                        className: "jsx-d732791046adfab6",
-                        children: "Nenhum anime encontrado"
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 383,
+                        lineNumber: 269,
                         columnNumber: 11
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        style: {
-                            color: "#aaa",
-                            marginBottom: "20px"
-                        },
-                        className: "jsx-d732791046adfab6",
+                    !loading && displayItems.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                         children: [
-                            'Não encontramos resultados para "',
-                            term,
-                            '".'
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: "grid",
+                                    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                                    gap: 20,
+                                    width: "100%",
+                                    maxWidth: 1000,
+                                    marginTop: "20px"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: displayItems.map((anime)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        onClick: ()=>{
+                                            localStorage.setItem("lastAnimeSearch", term || searchTerm || "");
+                                            router.push(`/${anime.mal_id}`);
+                                        },
+                                        style: {
+                                            cursor: "pointer"
+                                        },
+                                        className: "jsx-7a90291f0de70b21",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$AnimeCard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                            anime: anime
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/search/page.tsx",
+                                            lineNumber: 304,
+                                            columnNumber: 19
+                                        }, this)
+                                    }, anime.mal_id, false, {
+                                        fileName: "[project]/app/search/page.tsx",
+                                        lineNumber: 296,
+                                        columnNumber: 17
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 285,
+                                columnNumber: 13
+                            }, this),
+                            !finished && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>loadMore(),
+                                disabled: loading,
+                                style: {
+                                    marginTop: "40px",
+                                    padding: "12px 30px",
+                                    background: loading ? "#555" : "#1e88e5",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    cursor: loading ? "not-allowed" : "pointer",
+                                    opacity: loading ? 0.5 : 1
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: loading ? "Carregando..." : "Carregar Mais Animes"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 311,
+                                columnNumber: 15
+                            }, this),
+                            finished && displayItems.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                style: {
+                                    color: "#aaa",
+                                    marginTop: "20px"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Todos os animes foram carregados."
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 332,
+                                columnNumber: 15
+                            }, this)
+                        ]
+                    }, void 0, true),
+                    !loading && displayItems.length === 0 && searchMode && term && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            marginTop: 40,
+                            padding: 30,
+                            background: "rgba(0, 0, 0, 0.7)",
+                            borderRadius: "12px",
+                            textAlign: "center",
+                            maxWidth: "600px",
+                            width: "100%"
+                        },
+                        className: "jsx-7a90291f0de70b21",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                style: {
+                                    color: "white",
+                                    marginBottom: "10px"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Nenhum anime encontrado"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 349,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                style: {
+                                    color: "#aaa",
+                                    marginBottom: "20px"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: [
+                                    'Não encontramos resultados para "',
+                                    term,
+                                    '".'
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 352,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: handleClearSearch,
+                                style: {
+                                    padding: "10px 20px",
+                                    background: "#4ECDC4",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    cursor: "pointer",
+                                    fontWeight: "bold"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Ver Animes da Temporada"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 355,
+                                columnNumber: 13
+                            }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 386,
+                        lineNumber: 340,
                         columnNumber: 11
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        onClick: handleClearSearch,
+                    !loading && displayItems.length === 0 && !searchMode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
-                            padding: "10px 20px",
-                            background: "#4ECDC4",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontWeight: "bold"
+                            marginTop: 40,
+                            padding: 30,
+                            background: "rgba(0, 0, 0, 0.7)",
+                            borderRadius: "12px",
+                            textAlign: "center",
+                            maxWidth: "600px",
+                            width: "100%"
                         },
-                        className: "jsx-d732791046adfab6",
-                        children: "Ver Animes da Temporada"
-                    }, void 0, false, {
+                        className: "jsx-7a90291f0de70b21",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                style: {
+                                    color: "white",
+                                    marginBottom: "10px"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Busque seu anime favorito"
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 382,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                style: {
+                                    color: "#aaa"
+                                },
+                                className: "jsx-7a90291f0de70b21",
+                                children: "Digite o nome de um anime na barra de busca acima para começar."
+                            }, void 0, false, {
+                                fileName: "[project]/app/search/page.tsx",
+                                lineNumber: 385,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 389,
+                        lineNumber: 373,
                         columnNumber: 11
-                    }, this)
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        id: "7a90291f0de70b21",
+                        children: "@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}"
+                    }, void 0, false, void 0, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/search/page.tsx",
-                lineNumber: 374,
-                columnNumber: 9
-            }, this),
-            !loading && items.length === 0 && !term && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    marginTop: 40,
-                    padding: 30,
-                    background: "rgba(0, 0, 0, 0.7)",
-                    borderRadius: "12px",
-                    textAlign: "center",
-                    maxWidth: "600px",
-                    width: "100%"
-                },
-                className: "jsx-d732791046adfab6",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                        style: {
-                            color: "white",
-                            marginBottom: "10px"
-                        },
-                        className: "jsx-d732791046adfab6",
-                        children: "Busque seu anime favorito"
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 416,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        style: {
-                            color: "#aaa"
-                        },
-                        className: "jsx-d732791046adfab6",
-                        children: "Digite o nome de um anime na barra de busca acima para começar."
-                    }, void 0, false, {
-                        fileName: "[project]/app/search/page.tsx",
-                        lineNumber: 419,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/app/search/page.tsx",
-                lineNumber: 407,
-                columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                id: "d732791046adfab6",
-                children: "@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}"
-            }, void 0, false, void 0, this)
+                lineNumber: 133,
+                columnNumber: 7
+            }, this)
         ]
-    }, void 0, true, {
-        fileName: "[project]/app/search/page.tsx",
-        lineNumber: 121,
-        columnNumber: 5
-    }, this);
+    }, void 0, true);
 }
 }),
 "[project]/node_modules/next/dist/compiled/client-only/index.js [app-ssr] (ecmascript)", ((__turbopack_context__, module, exports) => {

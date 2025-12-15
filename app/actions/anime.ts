@@ -83,12 +83,12 @@ export async function getTrendingAnimesAction(limit: number = 6) {
 }
 
 // Server Action para detalhes do anime
-export async function getAnimeDetailsAction(id: string) {
+export async function getCurrentSeasonAction(limit: number = 12) {
   return new Promise<any>((resolve, reject) => {
     requestQueue.push(async () => {
       try {
         const response = await fetch(
-          `https://api.jikan.moe/v4/anime/${id}`
+          `https://api.jikan.moe/v4/seasons/now?limit=${limit}`
         );
         
         if (!response.ok) throw new Error(`API error: ${response.status}`);

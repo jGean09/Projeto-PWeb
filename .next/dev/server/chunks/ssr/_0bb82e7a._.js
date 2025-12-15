@@ -24,6 +24,9 @@ const CharactersPage = ()=>{
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [searchTerm, setSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [roleFilter, setRoleFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("all");
+    const [sortBy, setSortBy] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("name");
+    const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
+    const itemsPerPage = 20;
     const pageBackgroundStyle = {
         position: "fixed",
         top: 0,
@@ -63,27 +66,52 @@ const CharactersPage = ()=>{
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         let results = characters;
+        // Filtro por busca
         if (searchTerm.trim() !== "") {
             const term = searchTerm.toLowerCase();
             results = results.filter((character)=>character.character.name.toLowerCase().includes(term) || character.role.toLowerCase().includes(term) || character.voice_actors?.some((va)=>va.person.name.toLowerCase().includes(term)));
         }
+        // Filtro por papel
         if (roleFilter !== "all") {
             results = results.filter((character)=>character.role.toLowerCase() === roleFilter.toLowerCase());
         }
+        // Ordenação
+        results.sort((a, b)=>{
+            if (sortBy === "name") {
+                return a.character.name.localeCompare(b.character.name);
+            } else if (sortBy === "role") {
+                return a.role.localeCompare(b.role);
+            }
+            return 0;
+        });
         setFilteredCharacters(results);
+        setCurrentPage(1); // Reset para primeira página ao filtrar
     }, [
         searchTerm,
         roleFilter,
+        sortBy,
         characters
     ]);
+    // Paginação
+    const totalPages = Math.ceil(filteredCharacters.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedCharacters = filteredCharacters.slice(startIndex, endIndex);
     const uniqueRoles = Array.from(new Set(characters.map((c)=>c.role.toLowerCase()))).sort();
+    const handlePageChange = (page)=>{
+        setCurrentPage(page);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: pageBackgroundStyle
             }, void 0, false, {
                 fileName: "[project]/app/[id]/characters/page.tsx",
-                lineNumber: 84,
+                lineNumber: 111,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -108,54 +136,80 @@ const CharactersPage = ()=>{
                                     style: {
                                         color: "white",
                                         margin: 0,
-                                        fontSize: "2rem"
+                                        fontSize: "2.2rem",
+                                        textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+                                        background: "rgba(0, 0, 0, 0.6)",
+                                        padding: "15px 25px",
+                                        borderRadius: "12px",
+                                        border: "2px solid rgba(255, 255, 255, 0.1)"
                                     },
                                     children: "Personagens"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 96,
+                                    lineNumber: 124,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: ()=>router.push(`/${id}`),
                                     style: {
-                                        padding: "10px 20px",
-                                        background: "rgba(30, 136, 229, 0.9)",
+                                        padding: "12px 25px",
+                                        background: "linear-gradient(135deg, #1e88e5, #0d47a1)",
                                         color: "white",
                                         border: "none",
-                                        borderRadius: "8px",
+                                        borderRadius: "10px",
                                         cursor: "pointer",
                                         fontWeight: "bold",
-                                        transition: "all 0.3s"
+                                        fontSize: "16px",
+                                        transition: "all 0.3s",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        boxShadow: "0 4px 15px rgba(30, 136, 229, 0.4)"
                                     },
                                     onMouseEnter: (e)=>{
-                                        e.currentTarget.style.background = "rgba(30, 136, 229, 1)";
-                                        e.currentTarget.style.transform = "scale(1.05)";
+                                        e.currentTarget.style.transform = "translateY(-3px)";
+                                        e.currentTarget.style.boxShadow = "0 8px 20px rgba(30, 136, 229, 0.6)";
                                     },
                                     onMouseLeave: (e)=>{
-                                        e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)";
-                                        e.currentTarget.style.transform = "scale(1)";
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                        e.currentTarget.style.boxShadow = "0 4px 15px rgba(30, 136, 229, 0.4)";
                                     },
-                                    children: "↩ Voltar ao Anime"
-                                }, void 0, false, {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: "←"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                            lineNumber: 162,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: "Voltar ao Anime"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                            lineNumber: 163,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 97,
+                                    lineNumber: 136,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[id]/characters/page.tsx",
-                            lineNumber: 88,
+                            lineNumber: 116,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
-                                background: "rgba(0, 0, 0, 0.7)",
+                                background: "rgba(0, 0, 0, 0.8)",
                                 padding: "25px",
                                 borderRadius: "15px",
                                 marginBottom: "30px",
                                 backdropFilter: "blur(10px)",
-                                border: "1px solid rgba(255, 255, 255, 0.1)"
+                                border: "2px solid rgba(255, 255, 255, 0.15)",
+                                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)"
                             },
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
@@ -173,47 +227,58 @@ const CharactersPage = ()=>{
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                 type: "text",
-                                                placeholder: "Buscar por nome, papel ou dublador...",
+                                                placeholder: "🔍 Buscar por nome, papel ou dublador...",
                                                 value: searchTerm,
                                                 onChange: (e)=>setSearchTerm(e.target.value),
                                                 style: {
-                                                    padding: "12px 20px",
+                                                    padding: "14px 20px",
                                                     borderRadius: "10px",
-                                                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                                                    background: "rgba(0, 0, 0, 0.8)",
+                                                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                                                    background: "rgba(0, 0, 0, 0.9)",
                                                     color: "white",
                                                     flex: "1",
                                                     minWidth: "250px",
                                                     outline: "none",
                                                     fontSize: "16px",
                                                     transition: "all 0.3s"
-                                                }
+                                                },
+                                                onFocus: (e)=>e.target.style.borderColor = "#1e88e5",
+                                                onBlur: (e)=>e.target.style.borderColor = "rgba(255, 255, 255, 0.2)"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/[id]/characters/page.tsx",
-                                                lineNumber: 136,
+                                                lineNumber: 184,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
                                                 value: roleFilter,
                                                 onChange: (e)=>setRoleFilter(e.target.value),
                                                 style: {
-                                                    padding: "12px 20px",
+                                                    padding: "14px 45px 14px 20px",
                                                     borderRadius: "10px",
-                                                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                                                    background: "rgba(0, 0, 0, 0.8)",
+                                                    border: "2px solid rgba(255, 255, 255, 0.3)",
+                                                    background: "rgba(0, 0, 0, 0.9)",
                                                     color: "white",
-                                                    minWidth: "150px",
+                                                    minWidth: "180px",
                                                     outline: "none",
                                                     cursor: "pointer",
-                                                    fontSize: "16px"
+                                                    fontSize: "16px",
+                                                    fontWeight: "500",
+                                                    transition: "all 0.3s",
+                                                    appearance: "none",
+                                                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                                    backgroundRepeat: "no-repeat",
+                                                    backgroundPosition: "right 15px center",
+                                                    backgroundSize: "20px"
                                                 },
+                                                onMouseEnter: (e)=>e.currentTarget.style.borderColor = "#1e88e5",
+                                                onMouseLeave: (e)=>e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                         value: "all",
-                                                        children: "Todos os papéis"
+                                                        children: " Todos os papéis"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/characters/page.tsx",
-                                                        lineNumber: 170,
+                                                        lineNumber: 230,
                                                         columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     uniqueRoles.map((role, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -221,19 +286,65 @@ const CharactersPage = ()=>{
                                                             children: role.charAt(0).toUpperCase() + role.slice(1)
                                                         }, index, false, {
                                                             fileName: "[project]/app/[id]/characters/page.tsx",
-                                                            lineNumber: 172,
+                                                            lineNumber: 232,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/characters/page.tsx",
-                                                lineNumber: 155,
+                                                lineNumber: 206,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                                                value: sortBy,
+                                                onChange: (e)=>setSortBy(e.target.value),
+                                                style: {
+                                                    padding: "14px 45px 14px 20px",
+                                                    borderRadius: "10px",
+                                                    border: "2px solid rgba(255, 255, 255, 0.3)",
+                                                    background: "rgba(0, 0, 0, 0.9)",
+                                                    color: "white",
+                                                    minWidth: "180px",
+                                                    outline: "none",
+                                                    cursor: "pointer",
+                                                    fontSize: "16px",
+                                                    fontWeight: "500",
+                                                    transition: "all 0.3s",
+                                                    appearance: "none",
+                                                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                                    backgroundRepeat: "no-repeat",
+                                                    backgroundPosition: "right 15px center",
+                                                    backgroundSize: "20px"
+                                                },
+                                                onMouseEnter: (e)=>e.currentTarget.style.borderColor = "#4ECDC4",
+                                                onMouseLeave: (e)=>e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "name",
+                                                        children: " Ordenar por nome"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/characters/page.tsx",
+                                                        lineNumber: 263,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "role",
+                                                        children: " Ordenar por papel"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/characters/page.tsx",
+                                                        lineNumber: 264,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0))
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/[id]/characters/page.tsx",
+                                                lineNumber: 239,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/[id]/characters/page.tsx",
-                                        lineNumber: 135,
+                                        lineNumber: 183,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -244,135 +355,178 @@ const CharactersPage = ()=>{
                                             color: "white",
                                             fontSize: "16px",
                                             flexWrap: "wrap",
-                                            gap: "10px"
+                                            gap: "15px"
                                         },
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "15px",
+                                                    flexWrap: "wrap"
+                                                },
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                         style: {
-                                                            color: "#aaa"
+                                                            color: "#ffffff",
+                                                            background: "rgba(30, 136, 229, 0.2)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px",
+                                                            fontWeight: "bold"
                                                         },
                                                         children: [
                                                             filteredCharacters.length,
                                                             " personagem",
-                                                            filteredCharacters.length !== 1 ? 's' : '',
-                                                            " encontrado",
                                                             filteredCharacters.length !== 1 ? 's' : ''
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/[id]/characters/page.tsx",
-                                                        lineNumber: 189,
+                                                        lineNumber: 279,
                                                         columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     searchTerm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                         style: {
-                                                            marginLeft: "10px",
-                                                            color: "#90caf9"
+                                                            color: "#90caf9",
+                                                            background: "rgba(144, 202, 249, 0.1)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px"
                                                         },
                                                         children: [
-                                                            'para "',
+                                                            '"',
                                                             searchTerm,
                                                             '"'
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/[id]/characters/page.tsx",
-                                                        lineNumber: 193,
+                                                        lineNumber: 290,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     roleFilter !== "all" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                         style: {
-                                                            marginLeft: "10px",
-                                                            color: "#81c784"
+                                                            color: "#81c784",
+                                                            background: "rgba(129, 199, 132, 0.1)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px"
+                                                        },
+                                                        children: roleFilter
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/characters/page.tsx",
+                                                        lineNumber: 301,
+                                                        columnNumber: 21
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        style: {
+                                                            color: "#ffb74d",
+                                                            background: "rgba(255, 183, 77, 0.1)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px"
                                                         },
                                                         children: [
-                                                            "• Papel: ",
-                                                            roleFilter
+                                                            "Página ",
+                                                            currentPage,
+                                                            " de ",
+                                                            totalPages
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/[id]/characters/page.tsx",
-                                                        lineNumber: 198,
-                                                        columnNumber: 21
+                                                        lineNumber: 311,
+                                                        columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/characters/page.tsx",
-                                                lineNumber: 188,
+                                                lineNumber: 278,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
-                                            searchTerm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                onClick: ()=>setSearchTerm(""),
+                                            (searchTerm || roleFilter !== "all") && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>{
+                                                    setSearchTerm("");
+                                                    setRoleFilter("all");
+                                                    setSortBy("name");
+                                                },
                                                 style: {
-                                                    padding: "8px 16px",
-                                                    background: "rgba(255, 255, 255, 0.1)",
+                                                    padding: "10px 20px",
+                                                    background: "linear-gradient(135deg, #ff4444, #cc0000)",
                                                     color: "white",
                                                     border: "none",
                                                     borderRadius: "8px",
                                                     cursor: "pointer",
-                                                    fontSize: "14px",
-                                                    transition: "all 0.3s"
+                                                    fontSize: "15px",
+                                                    fontWeight: "bold",
+                                                    transition: "all 0.3s",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "8px"
                                                 },
-                                                onMouseEnter: (e)=>e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)",
-                                                onMouseLeave: (e)=>e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)",
-                                                children: "Limpar busca"
+                                                onMouseEnter: (e)=>{
+                                                    e.currentTarget.style.transform = "translateY(-2px)";
+                                                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(255, 68, 68, 0.4)";
+                                                },
+                                                onMouseLeave: (e)=>{
+                                                    e.currentTarget.style.transform = "translateY(0)";
+                                                    e.currentTarget.style.boxShadow = "none";
+                                                },
+                                                children: "Limpar filtros"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/[id]/characters/page.tsx",
-                                                lineNumber: 205,
+                                                lineNumber: 322,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/[id]/characters/page.tsx",
-                                        lineNumber: 179,
+                                        lineNumber: 269,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/[id]/characters/page.tsx",
-                                lineNumber: 130,
+                                lineNumber: 177,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/app/[id]/characters/page.tsx",
-                            lineNumber: 122,
+                            lineNumber: 168,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
                                 textAlign: "center",
-                                padding: "60px 20px",
+                                padding: "80px 20px",
                                 background: "rgba(0, 0, 0, 0.7)",
                                 borderRadius: "15px",
-                                backdropFilter: "blur(10px)"
+                                backdropFilter: "blur(10px)",
+                                border: "2px solid rgba(255, 255, 255, 0.1)"
                             },
                             className: "jsx-7ffbd280658ea1db",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     style: {
-                                        width: "60px",
-                                        height: "60px",
-                                        border: "5px solid rgba(255, 255, 255, 0.1)",
-                                        borderTop: "5px solid #1e88e5",
+                                        width: "70px",
+                                        height: "70px",
+                                        border: "6px solid rgba(255, 255, 255, 0.1)",
+                                        borderTop: "6px solid #1e88e5",
                                         borderRadius: "50%",
-                                        margin: "0 auto 20px",
+                                        margin: "0 auto 25px",
                                         animation: "spin 1s linear infinite"
                                     },
                                     className: "jsx-7ffbd280658ea1db"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 235,
+                                    lineNumber: 368,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     style: {
                                         color: "white",
-                                        fontSize: "18px"
+                                        fontSize: "20px",
+                                        textShadow: "0 2px 4px rgba(0,0,0,0.5)"
                                     },
                                     className: "jsx-7ffbd280658ea1db",
                                     children: "Carregando personagens..."
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 244,
+                                    lineNumber: 377,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -382,205 +536,393 @@ const CharactersPage = ()=>{
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[id]/characters/page.tsx",
-                            lineNumber: 228,
+                            lineNumber: 360,
                             columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)) : filteredCharacters.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        }, ("TURBOPACK compile-time value", void 0)) : paginatedCharacters.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
                                 textAlign: "center",
-                                padding: "60px 20px",
+                                padding: "80px 20px",
                                 background: "rgba(0, 0, 0, 0.7)",
                                 borderRadius: "15px",
-                                backdropFilter: "blur(10px)"
+                                backdropFilter: "blur(10px)",
+                                border: "2px solid rgba(255, 255, 255, 0.1)"
                             },
                             children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        fontSize: "60px",
+                                        marginBottom: "20px"
+                                    },
+                                    children: "😕"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[id]/characters/page.tsx",
+                                    lineNumber: 400,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     style: {
                                         color: "white",
-                                        fontSize: "20px",
-                                        marginBottom: "20px"
+                                        fontSize: "22px",
+                                        marginBottom: "15px",
+                                        fontWeight: "bold"
                                     },
-                                    children: searchTerm || roleFilter !== "all" ? `Nenhum personagem encontrado para "${searchTerm}"${roleFilter !== "all" ? ` com papel "${roleFilter}"` : ''}` : "Nenhum personagem encontrado."
+                                    children: "Nenhum personagem encontrado"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 401,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    style: {
+                                        color: "#aaa",
+                                        fontSize: "16px",
+                                        marginBottom: "30px",
+                                        maxWidth: "600px",
+                                        margin: "0 auto"
+                                    },
+                                    children: searchTerm || roleFilter !== "all" ? `Tente ajustar os filtros de busca.` : "Este anime não possui informações de personagens."
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[id]/characters/page.tsx",
+                                    lineNumber: 409,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 (searchTerm || roleFilter !== "all") && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: ()=>{
                                         setSearchTerm("");
                                         setRoleFilter("all");
+                                        setSortBy("name");
                                     },
                                     style: {
-                                        padding: "12px 24px",
-                                        background: "rgba(30, 136, 229, 0.9)",
+                                        padding: "14px 28px",
+                                        background: "linear-gradient(135deg, #1e88e5, #0d47a1)",
                                         color: "white",
                                         border: "none",
-                                        borderRadius: "8px",
+                                        borderRadius: "10px",
                                         cursor: "pointer",
                                         fontSize: "16px",
                                         fontWeight: "bold",
-                                        transition: "all 0.3s"
+                                        transition: "all 0.3s",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        margin: "0 auto"
                                     },
-                                    onMouseEnter: (e)=>e.currentTarget.style.background = "rgba(30, 136, 229, 1)",
-                                    onMouseLeave: (e)=>e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)",
+                                    onMouseEnter: (e)=>e.currentTarget.style.transform = "scale(1.05)",
+                                    onMouseLeave: (e)=>e.currentTarget.style.transform = "scale(1)",
                                     children: "Limpar filtros"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 266,
+                                    lineNumber: 421,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[id]/characters/page.tsx",
-                            lineNumber: 253,
+                            lineNumber: 392,
                             columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            style: {
-                                display: "grid",
-                                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                                gap: 25
-                            },
-                            children: filteredCharacters.map((character)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     style: {
-                                        background: "rgba(255, 255, 255, 0.08)",
-                                        borderRadius: "15px",
-                                        padding: "20px",
-                                        backdropFilter: "blur(10px)",
-                                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                                        transition: "all 0.3s ease",
-                                        cursor: "pointer"
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                                        gap: 25,
+                                        marginBottom: "40px"
                                     },
-                                    onMouseEnter: (e)=>{
-                                        e.currentTarget.style.transform = "translateY(-8px)";
-                                        e.currentTarget.style.borderColor = "#1e88e5";
-                                        e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
-                                    },
-                                    onMouseLeave: (e)=>{
-                                        e.currentTarget.style.transform = "translateY(0)";
-                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                                        e.currentTarget.style.boxShadow = "none";
-                                    },
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                            src: character.character.images.jpg.image_url,
-                                            alt: character.character.name,
+                                    children: paginatedCharacters.map((character)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             style: {
-                                                width: "100%",
-                                                height: "320px",
-                                                objectFit: "cover",
-                                                borderRadius: "10px",
-                                                marginBottom: "15px",
-                                                border: "2px solid rgba(255, 255, 255, 0.1)"
-                                            }
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/[id]/characters/page.tsx",
-                                            lineNumber: 316,
-                                            columnNumber: 19
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            style: {
-                                                color: "white"
+                                                background: "rgba(255, 255, 255, 0.08)",
+                                                borderRadius: "15px",
+                                                padding: "20px",
+                                                backdropFilter: "blur(10px)",
+                                                border: "2px solid rgba(255, 255, 255, 0.1)",
+                                                transition: "all 0.3s ease",
+                                                cursor: "pointer",
+                                                height: "100%",
+                                                display: "flex",
+                                                flexDirection: "column"
+                                            },
+                                            onMouseEnter: (e)=>{
+                                                e.currentTarget.style.transform = "translateY(-8px)";
+                                                e.currentTarget.style.borderColor = "#1e88e5";
+                                                e.currentTarget.style.boxShadow = "0 15px 35px rgba(0, 0, 0, 0.4)";
+                                            },
+                                            onMouseLeave: (e)=>{
+                                                e.currentTarget.style.transform = "translateY(0)";
+                                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                                e.currentTarget.style.boxShadow = "none";
                                             },
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                                    src: character.character.images.jpg.image_url,
+                                                    alt: character.character.name,
                                                     style: {
-                                                        margin: "0 0 10px 0",
-                                                        fontSize: "18px",
-                                                        fontWeight: "bold",
-                                                        lineHeight: "1.4"
-                                                    },
-                                                    children: character.character.name
+                                                        width: "100%",
+                                                        height: "350px",
+                                                        objectFit: "cover",
+                                                        borderRadius: "12px",
+                                                        marginBottom: "18px",
+                                                        border: "3px solid rgba(255, 255, 255, 0.15)"
+                                                    }
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                                    lineNumber: 329,
+                                                    lineNumber: 484,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     style: {
-                                                        display: "inline-block",
-                                                        background: character.role.toLowerCase() === "main" ? "rgba(30, 136, 229, 0.9)" : character.role.toLowerCase() === "supporting" ? "rgba(67, 160, 71, 0.9)" : "rgba(244, 81, 30, 0.9)",
                                                         color: "white",
-                                                        padding: "6px 12px",
-                                                        borderRadius: "20px",
-                                                        fontSize: "12px",
-                                                        fontWeight: "bold",
-                                                        marginBottom: "12px"
-                                                    },
-                                                    children: character.role
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[id]/characters/page.tsx",
-                                                    lineNumber: 337,
-                                                    columnNumber: 21
-                                                }, ("TURBOPACK compile-time value", void 0)),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    style: {
-                                                        margin: "8px 0",
-                                                        fontSize: "15px",
-                                                        color: "#aaa",
-                                                        lineHeight: "1.5"
+                                                        flex: 1
                                                     },
                                                     children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                             style: {
-                                                                color: "#90caf9"
+                                                                margin: "0 0 12px 0",
+                                                                fontSize: "20px",
+                                                                fontWeight: "bold",
+                                                                lineHeight: "1.4",
+                                                                minHeight: "56px",
+                                                                display: "flex",
+                                                                alignItems: "center"
                                                             },
-                                                            children: "Voz por:"
+                                                            children: character.character.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/[id]/characters/page.tsx",
-                                                            lineNumber: 357,
+                                                            lineNumber: 497,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
-                                                        " ",
-                                                        character.voice_actors?.[0]?.person?.name || "Não informado"
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            style: {
+                                                                display: "inline-block",
+                                                                background: character.role.toLowerCase() === "main" ? "linear-gradient(135deg, #1e88e5, #0d47a1)" : character.role.toLowerCase() === "supporting" ? "linear-gradient(135deg, #43a047, #2e7d32)" : "linear-gradient(135deg, #f4511e, #d84315)",
+                                                                color: "white",
+                                                                padding: "8px 16px",
+                                                                borderRadius: "25px",
+                                                                fontSize: "13px",
+                                                                fontWeight: "bold",
+                                                                marginBottom: "15px",
+                                                                boxShadow: "0 3px 10px rgba(0, 0, 0, 0.2)"
+                                                            },
+                                                            children: character.role
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                                            lineNumber: 508,
+                                                            columnNumber: 23
+                                                        }, ("TURBOPACK compile-time value", void 0)),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            style: {
+                                                                marginTop: "15px"
+                                                            },
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                    style: {
+                                                                        margin: "8px 0",
+                                                                        fontSize: "16px",
+                                                                        color: "#90caf9",
+                                                                        fontWeight: "500"
+                                                                    },
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                                            style: {
+                                                                                color: "#ffffff"
+                                                                            },
+                                                                            children: "Voz por:"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                                                            lineNumber: 532,
+                                                                            columnNumber: 27
+                                                                        }, ("TURBOPACK compile-time value", void 0)),
+                                                                        " ",
+                                                                        character.voice_actors?.[0]?.person?.name || "Não informado"
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/app/[id]/characters/page.tsx",
+                                                                    lineNumber: 526,
+                                                                    columnNumber: 25
+                                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                                character.voice_actors?.[0]?.person?.language && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                    style: {
+                                                                        margin: "4px 0 0 0",
+                                                                        fontSize: "14px",
+                                                                        color: "#aaa",
+                                                                        fontStyle: "italic"
+                                                                    },
+                                                                    children: [
+                                                                        "(",
+                                                                        character.voice_actors[0].person.language,
+                                                                        ")"
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/app/[id]/characters/page.tsx",
+                                                                    lineNumber: 535,
+                                                                    columnNumber: 27
+                                                                }, ("TURBOPACK compile-time value", void 0))
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                                            lineNumber: 525,
+                                                            columnNumber: 23
+                                                        }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                                    lineNumber: 351,
+                                                    lineNumber: 496,
                                                     columnNumber: 21
-                                                }, ("TURBOPACK compile-time value", void 0)),
-                                                character.voice_actors?.[0]?.person?.language && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    style: {
-                                                        margin: "0",
-                                                        fontSize: "13px",
-                                                        color: "#777",
-                                                        fontStyle: "italic"
-                                                    },
-                                                    children: [
-                                                        "(",
-                                                        character.voice_actors[0].person.language,
-                                                        ")"
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/app/[id]/characters/page.tsx",
-                                                    lineNumber: 360,
-                                                    columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0))
+                                            ]
+                                        }, character.character.mal_id, true, {
+                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                            lineNumber: 459,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)))
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[id]/characters/page.tsx",
+                                    lineNumber: 452,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                totalPages > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        flexWrap: "wrap",
+                                        marginBottom: "40px",
+                                        padding: "25px",
+                                        background: "rgba(0, 0, 0, 0.7)",
+                                        borderRadius: "15px",
+                                        border: "2px solid rgba(255, 255, 255, 0.1)"
+                                    },
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: ()=>handlePageChange(currentPage - 1),
+                                            disabled: currentPage === 1,
+                                            style: {
+                                                padding: "12px 25px",
+                                                background: currentPage === 1 ? "rgba(255, 255, 255, 0.1)" : "linear-gradient(135deg, #1e88e5, #0d47a1)",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                                                fontWeight: "bold",
+                                                fontSize: "16px",
+                                                opacity: currentPage === 1 ? 0.5 : 1,
+                                                transition: "all 0.3s"
+                                            },
+                                            children: "← Anterior"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                            lineNumber: 564,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        Array.from({
+                                            length: Math.min(5, totalPages)
+                                        }, (_, i)=>{
+                                            let pageNum;
+                                            if (totalPages <= 5) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage <= 3) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage >= totalPages - 2) {
+                                                pageNum = totalPages - 4 + i;
+                                            } else {
+                                                pageNum = currentPage - 2 + i;
+                                            }
+                                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>handlePageChange(pageNum),
+                                                style: {
+                                                    padding: "12px 18px",
+                                                    minWidth: "45px",
+                                                    background: currentPage === pageNum ? "linear-gradient(135deg, #4ECDC4, #1CE669)" : "rgba(255, 255, 255, 0.1)",
+                                                    color: "white",
+                                                    border: currentPage === pageNum ? "2px solid #ffffff" : "1px solid rgba(255, 255, 255, 0.3)",
+                                                    borderRadius: "8px",
+                                                    cursor: "pointer",
+                                                    fontWeight: "bold",
+                                                    fontSize: "16px",
+                                                    transition: "all 0.3s"
+                                                },
+                                                onMouseEnter: (e)=>{
+                                                    if (currentPage !== pageNum) {
+                                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
+                                                    }
+                                                },
+                                                children: pageNum
+                                            }, pageNum, false, {
+                                                fileName: "[project]/app/[id]/characters/page.tsx",
+                                                lineNumber: 598,
+                                                columnNumber: 23
+                                            }, ("TURBOPACK compile-time value", void 0));
+                                        }),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: ()=>handlePageChange(currentPage + 1),
+                                            disabled: currentPage === totalPages,
+                                            style: {
+                                                padding: "12px 25px",
+                                                background: currentPage === totalPages ? "rgba(255, 255, 255, 0.1)" : "linear-gradient(135deg, #FF6B6B, #FF8E53)",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                                                fontWeight: "bold",
+                                                fontSize: "16px",
+                                                opacity: currentPage === totalPages ? 0.5 : 1,
+                                                transition: "all 0.3s"
+                                            },
+                                            children: "Próxima →"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[id]/characters/page.tsx",
+                                            lineNumber: 628,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            style: {
+                                                color: "#ffffff",
+                                                fontSize: "16px",
+                                                marginLeft: "20px",
+                                                background: "rgba(0, 0, 0, 0.5)",
+                                                padding: "10px 20px",
+                                                borderRadius: "8px",
+                                                border: "1px solid rgba(255, 255, 255, 0.2)"
+                                            },
+                                            children: [
+                                                "Página ",
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    style: {
+                                                        color: "#4ECDC4",
+                                                        fontWeight: "bold"
+                                                    },
+                                                    children: currentPage
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[id]/characters/page.tsx",
+                                                    lineNumber: 658,
+                                                    columnNumber: 28
+                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                " de ",
+                                                totalPages
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/[id]/characters/page.tsx",
-                                            lineNumber: 328,
+                                            lineNumber: 649,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
-                                }, character.character.mal_id, true, {
+                                }, void 0, true, {
                                     fileName: "[project]/app/[id]/characters/page.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 552,
                                     columnNumber: 17
-                                }, ("TURBOPACK compile-time value", void 0)))
-                        }, void 0, false, {
-                            fileName: "[project]/app/[id]/characters/page.tsx",
-                            lineNumber: 290,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0))
+                                }, ("TURBOPACK compile-time value", void 0))
+                            ]
+                        }, void 0, true)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/[id]/characters/page.tsx",
-                    lineNumber: 87,
+                    lineNumber: 114,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/app/[id]/characters/page.tsx",
-                lineNumber: 86,
+                lineNumber: 113,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]

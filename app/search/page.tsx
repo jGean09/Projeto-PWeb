@@ -1,34 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import SearchBox from "@/components/SearchBox";
 import AnimeCard from "@/components/AnimeCard";
-import { searchAnimeAction } from '@/actions/anime';
-
-interface Anime {
-  mal_id: number;
-  title: string;
-  images: {
-    jpg: {
-      image_url: string;
-    };
-  };
-  score?: number;
-  type?: string;
-}
+import { useAnimeList } from "../../hooks/useAnimeList";
 
 export default function Page() {
   const router = useRouter();
-  const [items, setItems] = useState<Anime[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [term, setTerm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showBackButton, setShowBackButton] = useState(false);
+  
+  const { 
+    items, 
+    loadPage, 
+    search, 
+    loading, 
+    page,
+    totalPages,
+    mode,
+    setListMode,
+    searchTerm,
+    searchMode, 
+    clearSearch
+  } = useAnimeList();
+  
+  const modeNames = {
+    'season': { title: "Animes da Temporada"},
+    'top': { title: "Top Animes"},
+    'upcoming': { title: "Próximos Lançamentos"}
+  };
 
   const pageBackgroundStyle = {
-    position: "fixed" as "fixed",
+    position: "fixed" as const,
     top: 0,
     left: 0,
     width: "100vw",
@@ -41,92 +44,51 @@ export default function Page() {
   };
 
   const contentStyle = {
-    position: "relative" as "relative",
+    position: "relative" as const,
     zIndex: 1,
     padding: "20px",
     minHeight: "100vh",
     display: "flex",
-    flexDirection: "column" as "column",
+    flexDirection: "column" as const,
     alignItems: "center"
   };
 
-  async function loadItems(searchTerm: string, page: number) {
-    if (loading) return;
-    
-    setLoading(true);
-    try {
-      const result = await searchAnimeAction(searchTerm, page);
-      
-      setItems(result.data || []);
-      setTotalPages(result.pagination?.last_visible_page || 1);
-      setCurrentPage(result.pagination?.current_page || 1);
-      
-      if (searchTerm && searchTerm.trim() !== "") {
-        localStorage.setItem("lastAnimeSearch", searchTerm);
-        setShowBackButton(true);
-      }
-    } catch (error) {
-      console.error("Erro na busca:", error);
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
+  // Busca inicial
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlQuery = urlParams.get('q');
     
     if (urlQuery && urlQuery.trim() !== "") {
       setTerm(urlQuery);
-      setShowBackButton(true);
-      loadItems(urlQuery, 1);
-    } else {
-      const savedTerm = localStorage.getItem("lastAnimeSearch");
-      if (savedTerm && savedTerm.trim() !== "") {
-        setTerm(savedTerm);
-        setShowBackButton(true);
-        loadItems(savedTerm, 1);
-      } else {
-        loadItems("", 1);
-      }
+      search(urlQuery, 1);
     }
-  }, []);
+  }, [search]);
 
-  function handleSearch(newTerm: string) {
+  const handleSearch = useCallback((newTerm: string) => {
     setTerm(newTerm);
-    setCurrentPage(1);
-    setTotalPages(1);
-    
-    if (typeof window !== 'undefined') {
-      window.history.pushState({}, '', '/search');
+    search(newTerm, 1);
+  }, [search]);
+
+  const handleClearSearch = useCallback(() => {
+    setTerm(""); // Limpa o campo visual
+    clearSearch(); // USA A NOVA FUNÇÃO DO HOOK
+    router.push('/search'); // Limpa a URL
+  }, [clearSearch, router]);
+
+  const goToPage = useCallback((pageNumber: number) => {
+    if (searchMode) {
+      search(searchTerm, pageNumber);
+    } else {
+      loadPage(pageNumber);
     }
-    
-    loadItems(newTerm, 1);
-  }
+  }, [searchMode, searchTerm, search, loadPage]);
 
-  function goToPage(page: number) {
-    if (page < 1 || page > totalPages || loading) return;
-    setCurrentPage(page);
-    loadItems(term, page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function handleClearSearch() {
-    setTerm("");
-    setCurrentPage(1);
-    setItems([]);
-    setTotalPages(1);
-    setShowBackButton(false);
-    localStorage.removeItem("lastAnimeSearch");
-    loadItems("", 1);
-  }
-
-  function getPageNumbers() {
+  // Calcula números das páginas para exibir
+  const getPageNumbers = useCallback(() => {
     const pages = [];
     const maxPagesToShow = 5;
     
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
     
     if (endPage - startPage + 1 < maxPagesToShow) {
@@ -138,83 +100,155 @@ export default function Page() {
     }
     
     return pages;
-  }
+  }, [page, totalPages]);
+
+  const getPageTitle = () => {
+    if (searchMode) return `Busca: "${searchTerm}"`;
+    return modeNames[mode].title;
+  };
 
   return (
     <>
       <div style={pageBackgroundStyle} />
       
       <div style={contentStyle}>
-        {/* REMOVIDO O BOTÃO "VOLTAR PARA HOME" - Agora temos a logo no layout */}
+        <h1 style={{ 
+          color: "#ffffff", 
+          marginBottom: "30px", 
+          textAlign: "center",
+          fontSize: "32px",
+          fontWeight: "bold",
+          textShadow: "0 4px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(30, 136, 229, 0.5)",
+          background: "linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(15, 12, 41, 0.9))",
+          padding: "20px 40px",
+          borderRadius: "15px",
+          border: "3px solid rgba(255, 255, 255, 0.3)",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7)"
+        }}>
+          {getPageTitle()}
+        </h1>
 
-        <h1 style={{ color: "white", marginBottom: 20 }}>Buscar Animes</h1>
+        {/* Botões de modo - LINHA COMPACTA */}
+{!searchMode && (
+  <div style={{
+    display: "flex",
+    gap: "15px",
+    marginBottom: "30px",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "nowrap"
+  }}>
+    {['season', 'top', 'upcoming'].map((modeKey) => {
+      const modeInfo = modeNames[modeKey as keyof typeof modeNames];
+      const colors = {
+        'season': ['#1e88e5', '#0d47a1'],
+        'top': ['#FF6B6B', '#FF8E53'],
+        'upcoming': ['#4ECDC4', '#1CE669']
+      };
+      
+      return (
+        <button
+          key={modeKey}
+          onClick={() => setListMode(modeKey as any)}
+          style={{
+            padding: "12px 20px",
+            background: mode === modeKey 
+              ? `linear-gradient(135deg, ${colors[modeKey as keyof typeof colors][0]}, ${colors[modeKey as keyof typeof colors][1]})`
+              : "rgba(0, 0, 0, 0.85)",
+            color: "#ffffff",
+            border: mode === modeKey 
+              ? "2px solid #ffffff"
+              : "1px solid rgba(255, 255, 255, 0.6)",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "14px",
+            transition: "all 0.2s",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.6)"
+          }}
+        >
+          <span>{modeInfo.icon}</span>
+          <span>{modeInfo.title}</span>
+        </button>
+      );
+    })}
+  </div>
+)}
 
-        <SearchBox onSearch={handleSearch} />
+        {/* Barra de busca */}
+        <div style={{ width: "100%", maxWidth: "600px", marginBottom: "30px" }}>
+          <SearchBox onSearch={handleSearch} initialValue={term} />
+        </div>
 
-        {term && term.trim() !== "" && (
+        {/* Info da busca - COM ALTO CONTRASTE */}
+        {searchMode && searchTerm && (
           <div style={{
             width: "100%",
             maxWidth: "1000px",
-            background: "rgba(0, 0, 0, 0.8)",
-            borderRadius: "10px",
-            padding: "15px 20px",
-            marginBottom: "20px",
-            marginTop: "20px",
-            border: "2px solid #1e88e5",
+            background: "linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(30, 30, 50, 0.95))",
+            borderRadius: "15px",
+            padding: "20px 30px",
+            marginBottom: "30px",
+            border: "3px solid rgba(255, 255, 255, 0.5)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: "10px"
+            gap: "15px",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8)"
           }}>
-            <div style={{ color: "white" }}>
+            <div style={{ color: "#ffffff" }}>
               <div style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: "10px",
-                marginBottom: "5px"
+                fontSize: "18px", 
+                fontWeight: "bold", 
+                marginBottom: "8px",
+                textShadow: "0 2px 4px rgba(0, 0, 0, 0.9)"
               }}>
-                <span style={{ fontSize: "20px" }}></span>
-                <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-                  Resultados para: <span style={{ color: "#90caf9" }}>{term}</span>
-                </span>
+                 Resultados para: <span style={{ color: "#90caf9", fontSize: "20px" }}>{searchTerm}</span>
               </div>
               <div style={{ 
-                fontSize: "14px", 
-                color: "#aaa",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px"
+                fontSize: "15px", 
+                color: "#cccccc",
+                textShadow: "0 1px 3px rgba(0, 0, 0, 0.9)"
               }}>
-                <span>Página {currentPage} de {totalPages}</span>
-                <span></span>
-                <span>{items.length} animes nesta página</span>
+                 Página {page} de {totalPages} •  {items.length} animes
               </div>
             </div>
             
             <button
               onClick={handleClearSearch}
               style={{
-                padding: "8px 16px",
-                background: "#ff4444",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
+                padding: "12px 24px",
+                background: "linear-gradient(135deg, #ff4444, #cc0000)",
+                color: "#ffffff",
+                border: "3px solid rgba(255, 255, 255, 0.8)",
+                borderRadius: "10px",
                 cursor: "pointer",
                 fontWeight: "bold",
-                fontSize: "14px",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                transition: "all 0.3s"
+                fontSize: "15px",
+                transition: "all 0.3s",
+                boxShadow: "0 6px 20px rgba(255, 68, 68, 0.5)",
+                textShadow: "0 1px 3px rgba(0, 0, 0, 0.9)"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = "0 10px 25px rgba(255, 68, 68, 0.7)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 6px 20px rgba(255, 68, 68, 0.5)";
               }}
             >
-              Limpar Busca
+               Limpar Busca
             </button>
           </div>
         )}
 
-        {loading && (
+        {/* Loading */}
+        {loading && items.length === 0 && (
           <div style={{ marginTop: 40, textAlign: "center" }}>
             <div style={{
               width: "50px",
@@ -229,7 +263,8 @@ export default function Page() {
           </div>
         )}
 
-        {!loading && items.length > 0 && (
+        {/* Grid de animes */}
+        {items.length > 0 && (
           <>
             <div
               style={{
@@ -241,20 +276,21 @@ export default function Page() {
                 marginTop: "20px",
               }}
             >
-              {items.map((anime) => (
-                <div
-                  key={anime.mal_id}
-                  onClick={() => {
-                    localStorage.setItem("lastAnimeSearch", term);
-                    router.push(`/${anime.mal_id}`);
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <AnimeCard anime={anime} />
-                </div>
-              ))}
+            {items.map((anime, index) => (
+              <div
+                key={`${anime.mal_id}-${index}`}  
+                onClick={() => {
+                  localStorage.setItem("lastAnimeSearch", searchTerm || "");
+                  router.push(`/${anime.mal_id}`);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <AnimeCard anime={anime} />
+              </div>
+            ))}
             </div>
 
+            {/* PAGINAÇÃO NUMÉRICA */}
             {totalPages > 1 && (
               <div style={{
                 marginTop: "40px",
@@ -264,25 +300,42 @@ export default function Page() {
                 gap: "10px",
                 flexWrap: "wrap"
               }}>
+                {/* Botão Anterior */}
                 <button
-                  onClick={() => goToPage(currentPage - 1)}
-                  disabled={currentPage === 1 || loading}
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page === 1 || loading}
                   style={{
-                    padding: "10px 20px",
-                    background: currentPage === 1 ? "#555" : "#1e88e5",
+                    padding: "12px 25px",
+                    background: page === 1 
+                      ? "rgba(0, 0, 0, 0.7)" 
+                      : "linear-gradient(135deg, #1e88e5, #0d47a1)",
                     color: "white",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                    border: page === 1 
+                      ? "2px solid rgba(255, 255, 255, 0.3)" 
+                      : "3px solid rgba(255, 255, 255, 0.8)",
+                    borderRadius: "10px",
+                    cursor: page === 1 ? "not-allowed" : "pointer",
                     fontWeight: "bold",
                     fontSize: "16px",
-                    opacity: currentPage === 1 ? 0.5 : 1
+                    opacity: page === 1 ? 0.6 : 1,
+                    transition: "all 0.3s",
+                    boxShadow: page === 1 
+                      ? "none" 
+                      : "0 6px 20px rgba(30, 136, 229, 0.5)",
+                    textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)"
+                  }}
+                  onMouseEnter={(e) => {
+                    if (page !== 1 && !loading) {
+                      e.currentTarget.style.transform = "translateY(-3px)";
+                      e.currentTarget.style.boxShadow = "0 10px 25px rgba(30, 136, 229, 0.7)";
+                    }
                   }}
                 >
-                  Anterior
+                  ← Anterior
                 </button>
 
-                {currentPage > 3 && (
+                {/* Primeira página */}
+                {page > 3 && (
                   <>
                     <button
                       onClick={() => goToPage(1)}
@@ -298,32 +351,51 @@ export default function Page() {
                     >
                       1
                     </button>
-                    {currentPage > 4 && <span style={{ color: "white" }}>...</span>}
+                    {page > 4 && <span style={{ color: "white" }}>...</span>}
                   </>
                 )}
 
+                {/* Páginas do meio - CORES VIVAS */}
                 {getPageNumbers().map(pageNum => (
                   <button
                     key={pageNum}
                     onClick={() => goToPage(pageNum)}
                     style={{
-                      padding: "10px 16px",
-                      background: currentPage === pageNum ? "#4ECDC4" : "rgba(255, 255, 255, 0.1)",
-                      color: "white",
-                      border: currentPage === pageNum ? "2px solid #4ECDC4" : "none",
-                      borderRadius: "6px",
+                      padding: "12px 18px",
+                      background: page === pageNum 
+                        ? "linear-gradient(135deg, #FF6B6B, #FF8E53)" // Laranja/vermelho vibrante
+                        : "linear-gradient(135deg, #0f0c29, #302b63)", // Roxo escuro
+                      color: "#ffffff", // Sempre branco
+                      border: page === pageNum 
+                        ? "3px solid #FFD700" // Borda dourada
+                        : "2px solid rgba(255, 255, 255, 0.5)",
+                      borderRadius: "10px",
                       cursor: "pointer",
                       fontWeight: "bold",
-                      minWidth: "45px"
+                      minWidth: "50px",
+                      fontSize: "16px",
+                      transition: "all 0.3s",
+                      boxShadow: page === pageNum 
+                        ? "0 6px 25px rgba(255, 107, 107, 0.5), 0 0 15px rgba(255, 215, 0, 0.4)" 
+                        : "0 4px 15px rgba(0, 0, 0, 0.6)",
+                      textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)"
+                    }}
+                    onMouseEnter={(e) => {
+                      if (page !== pageNum) {
+                        e.currentTarget.style.background = "linear-gradient(135deg, #24243e, #302b63)";
+                        e.currentTarget.style.transform = "translateY(-3px)";
+                        e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.8)";
+                      }
                     }}
                   >
                     {pageNum}
                   </button>
                 ))}
 
-                {currentPage < totalPages - 2 && (
+                {/* Última página */}
+                {page < totalPages - 2 && (
                   <>
-                    {currentPage < totalPages - 3 && <span style={{ color: "white" }}>...</span>}
+                    {page < totalPages - 3 && <span style={{ color: "white" }}>...</span>}
                     <button
                       onClick={() => goToPage(totalPages)}
                       style={{
@@ -341,29 +413,61 @@ export default function Page() {
                   </>
                 )}
 
+                {/* Botão Próxima */}
                 <button
-                  onClick={() => goToPage(currentPage + 1)}
-                  disabled={currentPage === totalPages || loading}
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page === totalPages || loading}
                   style={{
-                    padding: "10px 20px",
-                    background: currentPage === totalPages ? "#555" : "#1e88e5",
+                    padding: "12px 25px",
+                    background: page === totalPages 
+                      ? "rgba(0, 0, 0, 0.7)" 
+                      : "linear-gradient(135deg, #FF6B6B, #FF8E53)",
                     color: "white",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                    border: page === totalPages 
+                      ? "2px solid rgba(255, 255, 255, 0.3)" 
+                      : "3px solid rgba(255, 255, 255, 0.8)",
+                    borderRadius: "10px",
+                    cursor: page === totalPages ? "not-allowed" : "pointer",
                     fontWeight: "bold",
                     fontSize: "16px",
-                    opacity: currentPage === totalPages ? 0.5 : 1
+                    opacity: page === totalPages ? 0.6 : 1,
+                    transition: "all 0.3s",
+                    boxShadow: page === totalPages 
+                      ? "none" 
+                      : "0 6px 20px rgba(255, 107, 107, 0.5)",
+                    textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)"
+                  }}
+                  onMouseEnter={(e) => {
+                    if (page !== totalPages && !loading) {
+                      e.currentTarget.style.transform = "translateY(-3px)";
+                      e.currentTarget.style.boxShadow = "0 10px 25px rgba(255, 107, 107, 0.7)";
+                    }
                   }}
                 >
-                  Próxima
+                  Próxima →
                 </button>
+
+                {/* Info da página */}
+                <div style={{ 
+                  color: "#ffffff", 
+                  fontSize: "16px", 
+                  marginLeft: "20px",
+                  fontWeight: "bold",
+                  textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)",
+                  background: "rgba(0, 0, 0, 0.7)",
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  border: "2px solid rgba(255, 255, 255, 0.3)"
+                }}>
+                  Página <span style={{ color: "#4ECDC4", fontSize: "18px" }}>{page}</span> de {totalPages}
+                </div>
               </div>
             )}
           </>
         )}
 
-        {!loading && items.length === 0 && term && (
+        {/* Sem resultados */}
+        {!loading && items.length === 0 && searchMode && (
           <div style={{
             marginTop: 40,
             padding: 30,
@@ -377,7 +481,7 @@ export default function Page() {
               Nenhum anime encontrado
             </h3>
             <p style={{ color: "#aaa", marginBottom: "20px" }}>
-              Não encontramos resultados para "{term}".
+              Não encontramos resultados para "{searchTerm}".
             </p>
             <button
               onClick={handleClearSearch}
@@ -389,14 +493,15 @@ export default function Page() {
                 borderRadius: "6px",
                 cursor: "pointer",
                 fontWeight: "bold"
-            }}
+              }}
             >
               Ver Animes da Temporada
             </button>
           </div>
         )}
 
-        {!loading && items.length === 0 && !term && (
+        {/* Instrução inicial */}
+        {!loading && items.length === 0 && !searchMode && (
           <div style={{
             marginTop: 40,
             padding: 30,
@@ -407,10 +512,10 @@ export default function Page() {
             width: "100%"
           }}>
             <h3 style={{ color: "white", marginBottom: "10px" }}>
-              Busque seu anime favorito
+              {modeNames[mode].title}
             </h3>
             <p style={{ color: "#aaa" }}>
-              Digite o nome de um anime na barra de busca acima para começar.
+              Use os botões acima para alternar entre os modos ou busque um anime específico.
             </p>
           </div>
         )}

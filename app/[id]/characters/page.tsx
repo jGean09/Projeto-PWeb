@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import SharedFilters from "@/components/SharedFilters"; // ✅ IMPORT ADICIONADO
 
 const CharactersPage = () => {
   const params = useParams();
@@ -13,9 +14,12 @@ const CharactersPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   const pageBackgroundStyle = {
-    position: "fixed" as "fixed",
+    position: "fixed" as const,
     top: 0,
     left: 0,
     width: "100vw",
@@ -26,7 +30,7 @@ const CharactersPage = () => {
   };
 
   const contentStyle = {
-    position: "relative" as "relative",
+    position: "relative" as const,
     zIndex: 1,
     padding: "20px",
     paddingTop: "80px",
@@ -55,6 +59,7 @@ const CharactersPage = () => {
   useEffect(() => {
     let results = characters;
     
+    // Filtro por busca
     if (searchTerm.trim() !== "") {
       const term = searchTerm.toLowerCase();
       results = results.filter(character => 
@@ -66,18 +71,36 @@ const CharactersPage = () => {
       );
     }
     
+    // Filtro por papel
     if (roleFilter !== "all") {
       results = results.filter(character => 
         character.role.toLowerCase() === roleFilter.toLowerCase()
       );
     }
     
-    setFilteredCharacters(results);
-  }, [searchTerm, roleFilter, characters]);
+    // Ordenação
+    results.sort((a, b) => {
+        return a.character.name.localeCompare(b.character.name);
+      });
+      
+      setFilteredCharacters(results);
+      setCurrentPage(1);
+    }, [searchTerm, roleFilter, characters]);
+
+  // Paginação
+  const totalPages = Math.ceil(filteredCharacters.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCharacters = filteredCharacters.slice(startIndex, endIndex);
 
   const uniqueRoles = Array.from(
     new Set(characters.map(c => c.role.toLowerCase()))
   ).sort();
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
@@ -85,6 +108,7 @@ const CharactersPage = () => {
       
       <div style={contentStyle}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          {/* Cabeçalho */}
           <div style={{ 
             display: "flex", 
             justifyContent: "space-between", 
@@ -93,155 +117,98 @@ const CharactersPage = () => {
             flexWrap: "wrap",
             gap: 15
           }}>
-            <h1 style={{ color: "white", margin: 0, fontSize: "2rem" }}>Personagens</h1>
+            <h1 style={{ 
+              color: "white", 
+              margin: 0, 
+              fontSize: "2.2rem",
+              textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+              background: "rgba(0, 0, 0, 0.6)",
+              padding: "15px 25px",
+              borderRadius: "12px",
+              border: "2px solid rgba(255, 255, 255, 0.1)"
+            }}>
+               Personagens
+            </h1>
             <button 
               onClick={() => router.push(`/${id}`)}
               style={{ 
-                padding: "10px 20px", 
-                background: "rgba(30, 136, 229, 0.9)", 
+                padding: "12px 25px", 
+                background: "linear-gradient(135deg, #1e88e5, #0d47a1)", 
                 color: "white", 
                 border: "none", 
-                borderRadius: "8px", 
+                borderRadius: "10px", 
                 cursor: "pointer",
                 fontWeight: "bold",
-                transition: "all 0.3s"
+                fontSize: "16px",
+                transition: "all 0.3s",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                boxShadow: "0 4px 15px rgba(30, 136, 229, 0.4)"
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(30, 136, 229, 1)";
-                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = "0 8px 20px rgba(30, 136, 229, 0.6)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)";
-                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 15px rgba(30, 136, 229, 0.4)";
               }}
             >
-              ↩ Voltar ao Anime
+              <span>←</span>
+              <span>Voltar ao Anime</span>
             </button>
           </div>
+          
+          {/* ✅ FILTROS E PAGINAÇÃO - COMPONENTE COMPARTILHADO */}
+          <SharedFilters
+            items={characters}
+            filteredItems={filteredCharacters}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filterValue={roleFilter}
+            setFilterValue={setRoleFilter}
+            sortValue={sortBy}
+            setSortValue={setSortBy}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            uniqueFilters={uniqueRoles}
+            filterLabel="papéis"
+            onClearFilters={() => {
+              setSearchTerm("");
+              setRoleFilter("all");
+              setSortBy("name");
+            }}
+            onPageChange={handlePageChange}
+            loading={loading}
+          />
 
-          <div style={{ 
-            background: "rgba(0, 0, 0, 0.7)", 
-            padding: "25px", 
-            borderRadius: "15px",
-            marginBottom: "30px",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(255, 255, 255, 0.1)"
-          }}>
-            <div style={{ 
-              display: "flex", 
-              flexDirection: "column",
-              gap: "20px"
-            }}>
-              <div style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}>
-                <input
-                  type="text"
-                  placeholder="Buscar por nome, papel ou dublador..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{
-                    padding: "12px 20px",
-                    borderRadius: "10px",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    background: "rgba(0, 0, 0, 0.8)",
-                    color: "white",
-                    flex: "1",
-                    minWidth: "250px",
-                    outline: "none",
-                    fontSize: "16px",
-                    transition: "all 0.3s"
-                  }}
-                />
-                
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  style={{
-                    padding: "12px 20px",
-                    borderRadius: "10px",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    background: "rgba(0, 0, 0, 0.8)",
-                    color: "white",
-                    minWidth: "150px",
-                    outline: "none",
-                    cursor: "pointer",
-                    fontSize: "16px"
-                  }}
-                >
-                  <option value="all">Todos os papéis</option>
-                  {uniqueRoles.map((role, index) => (
-                    <option key={index} value={role}>
-                      {role.charAt(0).toUpperCase() + role.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div style={{ 
-                display: "flex", 
-                justifyContent: "space-between",
-                alignItems: "center",
-                color: "white",
-                fontSize: "16px",
-                flexWrap: "wrap",
-                gap: "10px"
-              }}>
-                <div>
-                  <span style={{ color: "#aaa" }}>
-                    {filteredCharacters.length} personagem{filteredCharacters.length !== 1 ? 's' : ''} encontrado{filteredCharacters.length !== 1 ? 's' : ''}
-                  </span>
-                  {searchTerm && (
-                    <span style={{ marginLeft: "10px", color: "#90caf9" }}>
-                      para "{searchTerm}"
-                    </span>
-                  )}
-                  {roleFilter !== "all" && (
-                    <span style={{ marginLeft: "10px", color: "#81c784" }}>
-                      • Papel: {roleFilter}
-                    </span>
-                  )}
-                </div>
-                
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    style={{
-                      padding: "8px 16px",
-                      background: "rgba(255, 255, 255, 0.1)",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      transition: "all 0.3s"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"}
-                  >
-                    Limpar busca
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
+          {/* Loading */}
           {loading ? (
             <div style={{ 
               textAlign: "center", 
-              padding: "60px 20px",
+              padding: "80px 20px",
               background: "rgba(0, 0, 0, 0.7)",
               borderRadius: "15px",
-              backdropFilter: "blur(10px)"
+              backdropFilter: "blur(10px)",
+              border: "2px solid rgba(255, 255, 255, 0.1)"
             }}>
               <div style={{ 
-                width: "60px", 
-                height: "60px", 
-                border: "5px solid rgba(255, 255, 255, 0.1)",
-                borderTop: "5px solid #1e88e5",
+                width: "70px", 
+                height: "70px", 
+                border: "6px solid rgba(255, 255, 255, 0.1)",
+                borderTop: "6px solid #1e88e5",
                 borderRadius: "50%",
-                margin: "0 auto 20px",
+                margin: "0 auto 25px",
                 animation: "spin 1s linear infinite"
               }} />
-              <p style={{ color: "white", fontSize: "18px" }}>Carregando personagens...</p>
+              <p style={{ 
+                color: "white", 
+                fontSize: "20px",
+                textShadow: "0 2px 4px rgba(0,0,0,0.5)"
+              }}>
+                Carregando personagens...
+              </p>
               <style jsx>{`
                 @keyframes spin {
                   0% { transform: rotate(0deg); }
@@ -249,127 +216,137 @@ const CharactersPage = () => {
                 }
               `}</style>
             </div>
-          ) : filteredCharacters.length === 0 ? (
+          ) : paginatedCharacters.length === 0 ? (
             <div style={{ 
               textAlign: "center", 
-              padding: "60px 20px",
+              padding: "80px 20px",
               background: "rgba(0, 0, 0, 0.7)",
               borderRadius: "15px",
-              backdropFilter: "blur(10px)"
+              backdropFilter: "blur(10px)",
+              border: "2px solid rgba(255, 255, 255, 0.1)"
             }}>
-              <p style={{ color: "white", fontSize: "20px", marginBottom: "20px" }}>
-                {searchTerm || roleFilter !== "all" 
-                  ? `Nenhum personagem encontrado para "${searchTerm}"${roleFilter !== "all" ? ` com papel "${roleFilter}"` : ''}`
-                  : "Nenhum personagem encontrado."}
+              <div style={{ fontSize: "60px", marginBottom: "20px" }}>😕</div>
+              <p style={{ 
+                color: "white", 
+                fontSize: "22px", 
+                marginBottom: "15px",
+                fontWeight: "bold"
+              }}>
+                Nenhum personagem encontrado
               </p>
-              {(searchTerm || roleFilter !== "all") && (
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setRoleFilter("all");
-                  }}
-                  style={{
-                    padding: "12px 24px",
-                    background: "rgba(30, 136, 229, 0.9)",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    transition: "all 0.3s"
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(30, 136, 229, 1)"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)"}
-                >
-                  Limpar filtros
-                </button>
-              )}
+              <p style={{ 
+                color: "#aaa", 
+                fontSize: "16px", 
+                marginBottom: "30px",
+                maxWidth: "600px",
+                margin: "0 auto"
+              }}>
+                {searchTerm || roleFilter !== "all" 
+                  ? `Tente ajustar os filtros de busca.`
+                  : "Este anime não possui informações de personagens."}
+              </p>
             </div>
           ) : (
-            <div style={{ 
-              display: "grid", 
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", 
-              gap: 25
-            }}>
-              {filteredCharacters.map((character: any) => (
-                <div key={character.character.mal_id} style={{ 
-                  background: "rgba(255, 255, 255, 0.08)", 
-                  borderRadius: "15px", 
-                  padding: "20px",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-8px)";
-                  e.currentTarget.style.borderColor = "#1e88e5";
-                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-                >
-                  <img 
-                    src={character.character.images.jpg.image_url} 
-                    alt={character.character.name}
+            <>
+              {/* Grid de Personagens */}
+              <div style={{ 
+                display: "grid", 
+                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
+                gap: 25,
+                marginBottom: "40px"
+              }}>
+                {paginatedCharacters.map((character: any) => (
+                  <div 
+                    key={character.character.mal_id} 
                     style={{ 
-                      width: "100%", 
-                      height: "320px", 
-                      objectFit: "cover", 
-                      borderRadius: "10px",
-                      marginBottom: "15px",
-                      border: "2px solid rgba(255, 255, 255, 0.1)"
+                      background: "rgba(255, 255, 255, 0.08)", 
+                      borderRadius: "15px", 
+                      padding: "20px",
+                      backdropFilter: "blur(10px)",
+                      border: "2px solid rgba(255, 255, 255, 0.1)",
+                      transition: "all 0.3s ease",
+                      cursor: "pointer",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column"
                     }}
-                  />
-                  <div style={{ color: "white" }}>
-                    <h3 style={{ 
-                      margin: "0 0 10px 0", 
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      lineHeight: "1.4"
-                    }}>
-                      {character.character.name}
-                    </h3>
-                    <div style={{ 
-                      display: "inline-block",
-                      background: character.role.toLowerCase() === "main" ? "rgba(30, 136, 229, 0.9)" : 
-                                 character.role.toLowerCase() === "supporting" ? "rgba(67, 160, 71, 0.9)" : 
-                                 "rgba(244, 81, 30, 0.9)",
-                      color: "white",
-                      padding: "6px 12px",
-                      borderRadius: "20px",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      marginBottom: "12px"
-                    }}>
-                      {character.role}
-                    </div>
-                    <p style={{ 
-                      margin: "8px 0", 
-                      fontSize: "15px", 
-                      color: "#aaa",
-                      lineHeight: "1.5"
-                    }}>
-                      <strong style={{ color: "#90caf9" }}>Voz por:</strong> {character.voice_actors?.[0]?.person?.name || "Não informado"}
-                    </p>
-                    {character.voice_actors?.[0]?.person?.language && (
-                      <p style={{ 
-                        margin: "0", 
-                        fontSize: "13px", 
-                        color: "#777",
-                        fontStyle: "italic"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-8px)";
+                      e.currentTarget.style.borderColor = "#1e88e5";
+                      e.currentTarget.style.boxShadow = "0 15px 35px rgba(0, 0, 0, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    <img 
+                      src={character.character.images.jpg.image_url} 
+                      alt={character.character.name}
+                      style={{ 
+                        width: "100%", 
+                        height: "350px", 
+                        objectFit: "cover", 
+                        borderRadius: "12px",
+                        marginBottom: "18px",
+                        border: "3px solid rgba(255, 255, 255, 0.15)"
+                      }}
+                    />
+                    <div style={{ color: "white", flex: 1 }}>
+                      <h3 style={{ 
+                        margin: "0 0 12px 0", 
+                        fontSize: "20px",
+                        fontWeight: "bold",
+                        lineHeight: "1.4",
+                        minHeight: "56px",
+                        display: "flex",
+                        alignItems: "center"
                       }}>
-                        ({character.voice_actors[0].person.language})
-                      </p>
-                    )}
+                        {character.character.name}
+                      </h3>
+                      <div style={{ 
+                        display: "inline-block",
+                        background: character.role.toLowerCase() === "main" 
+                          ? "linear-gradient(135deg, #1e88e5, #0d47a1)" 
+                          : character.role.toLowerCase() === "supporting" 
+                          ? "linear-gradient(135deg, #43a047, #2e7d32)" 
+                          : "linear-gradient(135deg, #f4511e, #d84315)",
+                        color: "white",
+                        padding: "8px 16px",
+                        borderRadius: "25px",
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                        marginBottom: "15px",
+                        boxShadow: "0 3px 10px rgba(0, 0, 0, 0.2)"
+                      }}>
+                        {character.role}
+                      </div>
+                      <div style={{ marginTop: "15px" }}>
+                        <p style={{ 
+                          margin: "8px 0", 
+                          fontSize: "16px", 
+                          color: "#90caf9",
+                          fontWeight: "500"
+                        }}>
+                          <strong style={{ color: "#ffffff" }}>Voz por:</strong> {character.voice_actors?.[0]?.person?.name || "Não informado"}
+                        </p>
+                        {character.voice_actors?.[0]?.person?.language && (
+                          <p style={{ 
+                            margin: "4px 0 0 0", 
+                            fontSize: "14px", 
+                            color: "#aaa",
+                            fontStyle: "italic"
+                          }}>
+                            ({character.voice_actors[0].person.language})
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>

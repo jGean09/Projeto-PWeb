@@ -44,9 +44,6 @@ var _s = __turbopack_context__.k.signature();
 function RootLayout({ children }) {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    const handleLogoClick = ()=>{
-        router.push("/");
-    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("html", {
         lang: "pt-BR",
         className: __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_5972bc34$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].className,
@@ -54,104 +51,197 @@ function RootLayout({ children }) {
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("head", {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("title", {
-                        children: "AnimeHub - Encontre seu anime favorito"
+                        children: "AnimeZero - Animes e Mangás"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 22,
+                        lineNumber: 19,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
                         name: "description",
-                        content: "Plataforma para explorar animes usando a API Jikan"
+                        content: "Catálogo de animes e mangás usando a API Jikan"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 23,
+                        lineNumber: 20,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 21,
+                lineNumber: 18,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
                 style: {
                     margin: 0,
                     padding: 0,
-                    minHeight: "100vh"
+                    minHeight: "100vh",
+                    overflowX: "hidden",
+                    background: "#0a0a0a"
                 },
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        onClick: handleLogoClick,
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
                         style: {
                             position: "fixed",
-                            top: "20px",
-                            left: "20px",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
                             zIndex: 1000,
-                            padding: "12px 24px",
-                            background: "rgba(15, 12, 41, 0.95)",
-                            color: "white",
-                            border: "2px solid #1e88e5",
-                            borderRadius: "10px",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                            fontSize: "18px",
+                            background: "rgba(10, 10, 10, 0.95)",
+                            backdropFilter: "blur(10px)",
+                            borderBottom: "1px solid #333",
+                            padding: "12px 20px",
                             display: "flex",
                             alignItems: "center",
-                            gap: "10px",
-                            transition: "all 0.3s ease",
-                            boxShadow: "0 4px 15px rgba(30, 136, 229, 0.2)",
-                            backdropFilter: "blur(10px)"
+                            justifyContent: "space-between",
+                            boxShadow: "0 2px 20px rgba(0,0,0,0.5)",
+                            boxSizing: "border-box"
                         },
-                        onMouseEnter: (e)=>{
-                            e.currentTarget.style.background = "rgba(30, 136, 229, 0.95)";
-                            e.currentTarget.style.transform = "scale(1.05)";
-                            e.currentTarget.style.boxShadow = "0 6px 20px rgba(30, 136, 229, 0.4)";
-                        },
-                        onMouseLeave: (e)=>{
-                            e.currentTarget.style.background = "rgba(15, 12, 41, 0.95)";
-                            e.currentTarget.style.transform = "scale(1)";
-                            e.currentTarget.style.boxShadow = "0 4px 15px rgba(30, 136, 229, 0.2)";
-                        },
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            style: {
-                                fontSize: "22px",
-                                fontWeight: "bold",
-                                background: "linear-gradient(45deg, #FF6B6B, #4ECDC4, #1E88E5)",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent"
-                            },
-                            children: "AnimeHub"
-                        }, void 0, false, {
-                            fileName: "[project]/app/layout.tsx",
-                            lineNumber: 64,
-                            columnNumber: 11
-                        }, this)
-                    }, void 0, false, {
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>router.push("/"),
+                                style: {
+                                    background: "transparent",
+                                    color: "white",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    fontSize: "24px",
+                                    fontWeight: "bold",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
+                                    padding: "8px 16px",
+                                    borderRadius: "8px",
+                                    transition: "all 0.3s ease"
+                                },
+                                onMouseEnter: (e)=>{
+                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                                },
+                                onMouseLeave: (e)=>{
+                                    e.currentTarget.style.background = "transparent";
+                                },
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    style: {
+                                        background: "linear-gradient(45deg, #FF6B6B, #4ECDC4, #1E88E5)",
+                                        WebkitBackgroundClip: "text",
+                                        WebkitTextFillColor: "transparent"
+                                    },
+                                    children: "AnimeZero"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/layout.tsx",
+                                    lineNumber: 71,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/app/layout.tsx",
+                                lineNumber: 48,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
+                                style: {
+                                    display: "flex",
+                                    gap: "15px",
+                                    alignItems: "center"
+                                },
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: ()=>router.push("/search"),
+                                    style: {
+                                        background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                                        color: "white",
+                                        border: "none",
+                                        padding: "10px 20px",
+                                        borderRadius: "25px",
+                                        fontSize: "15px",
+                                        fontWeight: "600",
+                                        cursor: "pointer",
+                                        transition: "all 0.3s",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        boxShadow: "0 4px 15px rgba(79, 172, 254, 0.4)"
+                                    },
+                                    onMouseEnter: (e)=>{
+                                        e.currentTarget.style.transform = "translateY(-2px)";
+                                        e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 172, 254, 0.6)";
+                                    },
+                                    onMouseLeave: (e)=>{
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                        e.currentTarget.style.boxShadow = "0 4px 15px rgba(79, 172, 254, 0.4)";
+                                    },
+                                    children: "🔍 Buscar Animes"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/layout.tsx",
+                                    lineNumber: 88,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/app/layout.tsx",
+                                lineNumber: 81,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 31,
+                        lineNumber: 30,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
                         style: {
-                            paddingTop: "80px" // Para não ficar embaixo do botão
+                            paddingTop: "80px",
+                            minHeight: "calc(100vh - 80px)"
                         },
                         children: children
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 76,
+                        lineNumber: 120,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
+                        style: {
+                            background: "rgba(0, 0, 0, 0.8)",
+                            color: "#888",
+                            textAlign: "center",
+                            padding: "20px",
+                            borderTop: "1px solid #333",
+                            fontSize: "14px"
+                        },
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            children: [
+                                "Dados fornecidos pela ",
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                    href: "https://jikan.moe",
+                                    target: "_blank",
+                                    style: {
+                                        color: "#4facfe"
+                                    },
+                                    children: "Jikan API"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/layout.tsx",
+                                    lineNumber: 136,
+                                    columnNumber: 36
+                                }, this),
+                                " • AnimeZero © 2024"
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/layout.tsx",
+                            lineNumber: 136,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 128,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 25,
+                lineNumber: 22,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 20,
+        lineNumber: 17,
         columnNumber: 5
     }, this);
 }
