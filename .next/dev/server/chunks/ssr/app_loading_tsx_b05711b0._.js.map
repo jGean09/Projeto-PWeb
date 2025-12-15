@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/ivyso/Documents/proj_animes/proj_anime/app/loading.tsx"],"sourcesContent":["export default function Loading() {\r\n  return (\r\n    <div style={{ textAlign: 'center', padding: '50px' }}>\r\n      <div style={{\r\n        width: '50px',\r\n        height: '50px',\r\n        border: '5px solid rgba(255,255,255,0.1)',\r\n        borderTop: '5px solid #1e88e5',\r\n        borderRadius: '50%',\r\n        margin: '0 auto 20px',\r\n        animation: 'spin 1s linear infinite'\r\n      }} />\r\n      <p style={{ color: 'white' }}>Carregando...</p>\r\n    </div>\r\n  );\r\n}"],"names":[],"mappings":";;;;;;AAAe,SAAS;IACtB,qBACE,8OAAC;QAAI,OAAO;YAAE,WAAW;YAAU,SAAS;QAAO;;0BACjD,8OAAC;gBAAI,OAAO;oBACV,OAAO;oBACP,QAAQ;oBACR,QAAQ;oBACR,WAAW;oBACX,cAAc;oBACd,QAAQ;oBACR,WAAW;gBACb;;;;;;0BACA,8OAAC;gBAAE,OAAO;oBAAE,OAAO;gBAAQ;0BAAG;;;;;;;;;;;;AAGpC"}}]
-}
