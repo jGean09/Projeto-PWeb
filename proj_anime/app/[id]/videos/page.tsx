@@ -149,7 +149,7 @@ const VideosPage = () => {
             fontSize: "14px"
           }}>
             <p style={{ margin: 0 }}>
-              🔍 <strong>Trailers do YouTube:</strong> Clique em qualquer card para buscar no YouTube
+               <strong>Trailers do YouTube:</strong> Clique em qualquer card para buscar no YouTube
             </p>
           </div>
         )}
@@ -315,7 +315,7 @@ const VideosPage = () => {
                       alignItems: "center",
                       gap: "5px"
                     }}>
-                      <span style={{ fontSize: "14px" }}>🎬</span> Trailer
+                      <span style={{ fontSize: "14px" }}></span> Trailer
                     </span>
                     
                     <span style={{
@@ -325,7 +325,7 @@ const VideosPage = () => {
                       alignItems: "center",
                       gap: "5px"
                     }}>
-                      <span>🔗</span> YouTube
+                      <span></span> YouTube
                     </span>
                   </div>
                 </a>

@@ -1,32 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useHomeData } from "../hooks/useHomeData";
 
 export default function HomePage() {
   const router = useRouter();
-  const [trendingAnimes, setTrendingAnimes] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    async function loadHomeData() {
-      setLoading(true);
-      try {
-        const trendingRes = await fetch("https://api.jikan.moe/v4/top/anime?limit=6");
-        const trendingData = await trendingRes.json();
-        setTrendingAnimes(trendingData.data || []);
-      } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadHomeData();
-  }, []);
-
+  
+  const { trendingAnimes, seasonAnimes, loading } = useHomeData();
+  
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -190,7 +174,7 @@ export default function HomePage() {
                 gap: "10px",
                 color: "white"
               }}>
-                Em Alta Agora
+                Em Alta
               </h2>
               <Link href="/search" style={{
                 color: "#4ECDC4",
@@ -270,6 +254,117 @@ export default function HomePage() {
                         {anime.type}
                       </span>
                     </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* NOVA SEÇÃO: ANIMES DA TEMPORADA */}
+          <section style={{ marginBottom: "60px", marginTop: "60px" }}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "30px"
+            }}>
+              <h2 style={{
+                fontSize: "28px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                color: "white"
+              }}>
+                <span style={{ color: "#4ECDC4" }}></span> Animes da Temporada
+              </h2>
+              <Link href="/search?mode=season" style={{
+                color: "#4ECDC4",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px"
+              }}>
+                Ver mais →
+              </Link>
+            </div>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+              gap: "20px"
+            }}>
+              {seasonAnimes.map(anime => (
+                <div
+                  key={`season-${anime.mal_id}`}
+                  onClick={() => router.push(`/${anime.mal_id}`)}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                    border: "1px solid rgba(255, 255, 255, 0.1)"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <img
+                    src={anime.images?.jpg?.image_url}
+                    alt={anime.title}
+                    style={{
+                      width: "100%",
+                      height: "250px",
+                      objectFit: "cover"
+                    }}
+                  />
+                  <div style={{ padding: "15px" }}>
+                    <h3 style={{
+                      margin: "0 0 10px 0",
+                      fontSize: "14px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      color: "white"
+                    }}>
+                      {anime.title}
+                    </h3>
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center"
+                    }}>
+                      <span style={{
+                        fontSize: "12px",
+                        color: "#4ECDC4",
+                        background: "rgba(78, 205, 196, 0.1)",
+                        padding: "3px 8px",
+                        borderRadius: "4px"
+                      }}>
+                        ⭐ {anime.score || "N/A"}
+                      </span>
+                      <span style={{
+                        fontSize: "11px",
+                        color: "#B0BEC5"
+                      }}>
+                        {anime.type}
+                      </span>
+                    </div>
+                    {anime.episodes && (
+                      <div style={{
+                        fontSize: "11px",
+                        color: "#FF6B6B",
+                        marginTop: "8px",
+                        textAlign: "center"
+                      }}>
+                        {anime.episodes} eps
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
