@@ -200,60 +200,6 @@ const AnimeDetail = ()=>{
                 lineNumber: 117,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                onClick: ()=>router.push('/search'),
-                style: {
-                    position: "fixed",
-                    top: "20px",
-                    right: "20px",
-                    zIndex: 1000,
-                    padding: "10px 20px",
-                    background: "rgba(0, 0, 0, 0.8)",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    transition: "all 0.3s",
-                    border: "2px solid #1e88e5"
-                },
-                onMouseEnter: (e)=>{
-                    e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)";
-                    e.currentTarget.style.transform = "scale(1.05)";
-                },
-                onMouseLeave: (e)=>{
-                    e.currentTarget.style.background = "rgba(0, 0, 0, 0.8)";
-                    e.currentTarget.style.transform = "scale(1)";
-                },
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        children: "Voltar para Pesquisa"
-                    }, void 0, false, {
-                        fileName: "[project]/app/[id]/page.tsx",
-                        lineNumber: 150,
-                        columnNumber: 9
-                    }, ("TURBOPACK compile-time value", void 0)),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        style: {
-                            fontSize: "20px"
-                        },
-                        children: "→"
-                    }, void 0, false, {
-                        fileName: "[project]/app/[id]/page.tsx",
-                        lineNumber: 151,
-                        columnNumber: 9
-                    }, ("TURBOPACK compile-time value", void 0)),
-                    " "
-                ]
-            }, void 0, true, {
-                fileName: "[project]/app/[id]/page.tsx",
-                lineNumber: 120,
-                columnNumber: 7
-            }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: contentStyle,
                 children: [
@@ -269,7 +215,7 @@ const AnimeDetail = ()=>{
                         children: anime.title
                     }, void 0, false, {
                         fileName: "[project]/app/[id]/page.tsx",
-                        lineNumber: 155,
+                        lineNumber: 120,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -308,7 +254,7 @@ const AnimeDetail = ()=>{
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/app/[id]/page.tsx",
-                                        lineNumber: 182,
+                                        lineNumber: 147,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -325,7 +271,7 @@ const AnimeDetail = ()=>{
                                                         children: "Ano:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/page.tsx",
-                                                        lineNumber: 196,
+                                                        lineNumber: 161,
                                                         columnNumber: 18
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     " ",
@@ -333,7 +279,7 @@ const AnimeDetail = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/page.tsx",
-                                                lineNumber: 196,
+                                                lineNumber: 161,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -342,7 +288,7 @@ const AnimeDetail = ()=>{
                                                         children: "Score:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/page.tsx",
-                                                        lineNumber: 197,
+                                                        lineNumber: 162,
                                                         columnNumber: 18
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     " ",
@@ -350,7 +296,7 @@ const AnimeDetail = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/page.tsx",
-                                                lineNumber: 197,
+                                                lineNumber: 162,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -359,7 +305,7 @@ const AnimeDetail = ()=>{
                                                         children: "Status:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/page.tsx",
-                                                        lineNumber: 198,
+                                                        lineNumber: 163,
                                                         columnNumber: 18
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     " ",
@@ -367,7 +313,7 @@ const AnimeDetail = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/page.tsx",
-                                                lineNumber: 198,
+                                                lineNumber: 163,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -376,7 +322,7 @@ const AnimeDetail = ()=>{
                                                         children: "Gênero:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/page.tsx",
-                                                        lineNumber: 199,
+                                                        lineNumber: 164,
                                                         columnNumber: 18
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     " ",
@@ -384,7 +330,7 @@ const AnimeDetail = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/page.tsx",
-                                                lineNumber: 199,
+                                                lineNumber: 164,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -393,7 +339,7 @@ const AnimeDetail = ()=>{
                                                         children: "Tipo:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/page.tsx",
-                                                        lineNumber: 200,
+                                                        lineNumber: 165,
                                                         columnNumber: 18
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     " ",
@@ -401,7 +347,7 @@ const AnimeDetail = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/page.tsx",
-                                                lineNumber: 200,
+                                                lineNumber: 165,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -410,7 +356,7 @@ const AnimeDetail = ()=>{
                                                         children: "Quant. de episódios:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/page.tsx",
-                                                        lineNumber: 201,
+                                                        lineNumber: 166,
                                                         columnNumber: 18
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     " ",
@@ -418,19 +364,19 @@ const AnimeDetail = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/page.tsx",
-                                                lineNumber: 201,
+                                                lineNumber: 166,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/[id]/page.tsx",
-                                        lineNumber: 195,
+                                        lineNumber: 160,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/[id]/page.tsx",
-                                lineNumber: 181,
+                                lineNumber: 146,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -452,7 +398,7 @@ const AnimeDetail = ()=>{
                                             children: "Sinopse:"
                                         }, void 0, false, {
                                             fileName: "[project]/app/[id]/page.tsx",
-                                            lineNumber: 218,
+                                            lineNumber: 183,
                                             columnNumber: 16
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         " ",
@@ -460,12 +406,12 @@ const AnimeDetail = ()=>{
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/[id]/page.tsx",
-                                    lineNumber: 218,
+                                    lineNumber: 183,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/app/[id]/page.tsx",
-                                lineNumber: 205,
+                                lineNumber: 170,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -500,15 +446,15 @@ const AnimeDetail = ()=>{
                                                 e.currentTarget.style.transform = "scale(1)";
                                                 e.currentTarget.style.boxShadow = "none";
                                             },
-                                            children: "👥 Ver Personagens"
+                                            children: "Ver Personagens"
                                         }, void 0, false, {
                                             fileName: "[project]/app/[id]/page.tsx",
-                                            lineNumber: 230,
+                                            lineNumber: 196,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/app/[id]/page.tsx",
-                                        lineNumber: 229,
+                                        lineNumber: 195,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -533,15 +479,15 @@ const AnimeDetail = ()=>{
                                                 e.currentTarget.style.transform = "scale(1)";
                                                 e.currentTarget.style.boxShadow = "none";
                                             },
-                                            children: "🎬 Ver Staff"
+                                            children: "Ver Staff"
                                         }, void 0, false, {
                                             fileName: "[project]/app/[id]/page.tsx",
-                                            lineNumber: 255,
+                                            lineNumber: 221,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/app/[id]/page.tsx",
-                                        lineNumber: 254,
+                                        lineNumber: 220,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -566,33 +512,33 @@ const AnimeDetail = ()=>{
                                                 e.currentTarget.style.transform = "scale(1)";
                                                 e.currentTarget.style.boxShadow = "none";
                                             },
-                                            children: "📺 Ver Vídeos"
+                                            children: "Ver Vídeos"
                                         }, void 0, false, {
                                             fileName: "[project]/app/[id]/page.tsx",
-                                            lineNumber: 280,
+                                            lineNumber: 246,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/app/[id]/page.tsx",
-                                        lineNumber: 279,
+                                        lineNumber: 245,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/[id]/page.tsx",
-                                lineNumber: 221,
+                                lineNumber: 187,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/[id]/page.tsx",
-                        lineNumber: 166,
+                        lineNumber: 131,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/[id]/page.tsx",
-                lineNumber: 154,
+                lineNumber: 119,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]

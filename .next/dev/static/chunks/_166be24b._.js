@@ -22,8 +22,13 @@ const StaffPage = ()=>{
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const { id } = params;
     const [staff, setStaff] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [filteredStaff, setFilteredStaff] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [searchTerm, setSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [sortBy, setSortBy] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("name");
+    const [positionFilter, setPositionFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("all");
+    const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
+    const itemsPerPage = 15;
     const pageBackgroundStyle = {
         position: "fixed",
         top: 0,
@@ -49,7 +54,9 @@ const StaffPage = ()=>{
                 try {
                     const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/staff`);
                     const json = await res.json();
-                    setStaff(json.data || []);
+                    const data = json.data || [];
+                    setStaff(data);
+                    setFilteredStaff(data);
                 } catch (error) {
                     console.error("Erro ao carregar staff:", error);
                 } finally{
@@ -61,23 +68,74 @@ const StaffPage = ()=>{
     }["StaffPage.useEffect"], [
         id
     ]);
-    const filteredStaff = staff.filter((person)=>person.person.name.toLowerCase().includes(searchTerm.toLowerCase()) || person.positions?.some((pos)=>pos.toLowerCase().includes(searchTerm.toLowerCase())));
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "StaffPage.useEffect": ()=>{
+            let results = staff;
+            if (searchTerm.trim() !== "") {
+                const term = searchTerm.toLowerCase();
+                results = results.filter({
+                    "StaffPage.useEffect": (person)=>person.person.name.toLowerCase().includes(term) || person.positions?.some({
+                            "StaffPage.useEffect": (pos)=>pos.toLowerCase().includes(term)
+                        }["StaffPage.useEffect"])
+                }["StaffPage.useEffect"]);
+            }
+            if (positionFilter !== "all") {
+                results = results.filter({
+                    "StaffPage.useEffect": (person)=>person.positions?.some({
+                            "StaffPage.useEffect": (pos)=>pos.toLowerCase() === positionFilter.toLowerCase()
+                        }["StaffPage.useEffect"])
+                }["StaffPage.useEffect"]);
+            }
+            results.sort({
+                "StaffPage.useEffect": (a, b)=>{
+                    if (sortBy === "name") {
+                        return a.person.name.localeCompare(b.person.name);
+                    } else if (sortBy === "favorites") {
+                        return (b.person.favorites || 0) - (a.person.favorites || 0);
+                    }
+                    return 0;
+                }
+            }["StaffPage.useEffect"]);
+            setFilteredStaff(results);
+            setCurrentPage(1);
+        }
+    }["StaffPage.useEffect"], [
+        searchTerm,
+        positionFilter,
+        sortBy,
+        staff
+    ]);
+    const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedStaff = filteredStaff.slice(startIndex, endIndex);
+    const uniquePositions = Array.from(new Set(staff.flatMap((person)=>person.positions || []))).sort();
+    const handlePageChange = (page)=>{
+        setCurrentPage(page);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: pageBackgroundStyle
+                style: pageBackgroundStyle,
+                className: "jsx-d732791046adfab6"
             }, void 0, false, {
                 fileName: "[project]/app/[id]/staff/page.tsx",
-                lineNumber: 60,
+                lineNumber: 108,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: contentStyle,
+                className: "jsx-d732791046adfab6",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     style: {
                         maxWidth: "1200px",
                         margin: "0 auto"
                     },
+                    className: "jsx-d732791046adfab6",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
@@ -88,397 +146,861 @@ const StaffPage = ()=>{
                                 flexWrap: "wrap",
                                 gap: 15
                             },
+                            className: "jsx-d732791046adfab6",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                     style: {
                                         color: "white",
                                         margin: 0,
-                                        fontSize: "2rem"
+                                        fontSize: "2.2rem",
+                                        textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+                                        background: "rgba(0, 0, 0, 0.6)",
+                                        padding: "15px 25px",
+                                        borderRadius: "12px",
+                                        border: "2px solid rgba(255, 255, 255, 0.1)"
                                     },
+                                    className: "jsx-d732791046adfab6",
                                     children: "Staff do Anime"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 72,
+                                    lineNumber: 121,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: ()=>router.push(`/${id}`),
                                     style: {
+                                        padding: "12px 25px",
+                                        background: "linear-gradient(135deg, #1e88e5, #0d47a1)",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "10px",
+                                        cursor: "pointer",
+                                        fontWeight: "bold",
+                                        fontSize: "16px",
+                                        transition: "all 0.3s",
                                         display: "flex",
-                                        gap: 15,
                                         alignItems: "center",
-                                        flexWrap: "wrap"
+                                        gap: "10px",
+                                        boxShadow: "0 4px 15px rgba(30, 136, 229, 0.4)"
                                     },
+                                    onMouseEnter: (e)=>{
+                                        e.currentTarget.style.transform = "translateY(-3px)";
+                                        e.currentTarget.style.boxShadow = "0 8px 20px rgba(30, 136, 229, 0.6)";
+                                    },
+                                    onMouseLeave: (e)=>{
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                        e.currentTarget.style.boxShadow = "0 4px 15px rgba(30, 136, 229, 0.4)";
+                                    },
+                                    className: "jsx-d732791046adfab6",
                                     children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                            type: "text",
-                                            placeholder: "Buscar por nome ou posição...",
-                                            value: searchTerm,
-                                            onChange: (e)=>setSearchTerm(e.target.value),
-                                            style: {
-                                                padding: "12px 20px",
-                                                borderRadius: "10px",
-                                                border: "1px solid rgba(255, 255, 255, 0.2)",
-                                                background: "rgba(0, 0, 0, 0.8)",
-                                                color: "white",
-                                                minWidth: "250px",
-                                                outline: "none",
-                                                fontSize: "16px",
-                                                transition: "all 0.3s"
-                                            }
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "jsx-d732791046adfab6",
+                                            children: "←"
                                         }, void 0, false, {
                                             fileName: "[project]/app/[id]/staff/page.tsx",
-                                            lineNumber: 75,
+                                            lineNumber: 160,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                            onClick: ()=>router.push(`/${id}`),
-                                            style: {
-                                                padding: "12px 24px",
-                                                background: "rgba(30, 136, 229, 0.9)",
-                                                color: "white",
-                                                border: "none",
-                                                borderRadius: "10px",
-                                                cursor: "pointer",
-                                                fontWeight: "bold",
-                                                transition: "all 0.3s",
-                                                whiteSpace: "nowrap"
-                                            },
-                                            onMouseEnter: (e)=>{
-                                                e.currentTarget.style.background = "rgba(30, 136, 229, 1)";
-                                                e.currentTarget.style.transform = "scale(1.05)";
-                                            },
-                                            onMouseLeave: (e)=>{
-                                                e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)";
-                                                e.currentTarget.style.transform = "scale(1)";
-                                            },
-                                            children: "↩ Voltar ao Anime"
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "jsx-d732791046adfab6",
+                                            children: "Voltar ao Anime"
                                         }, void 0, false, {
                                             fileName: "[project]/app/[id]/staff/page.tsx",
-                                            lineNumber: 93,
+                                            lineNumber: 161,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 74,
+                                    lineNumber: 134,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[id]/staff/page.tsx",
-                            lineNumber: 64,
+                            lineNumber: 113,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
-                                color: "white",
-                                marginBottom: 25,
-                                background: "rgba(0, 0, 0, 0.7)",
-                                padding: "15px 20px",
-                                borderRadius: "10px",
+                                background: "rgba(0, 0, 0, 0.8)",
+                                padding: "25px",
+                                borderRadius: "15px",
+                                marginBottom: "30px",
                                 backdropFilter: "blur(10px)",
-                                border: "1px solid rgba(255, 255, 255, 0.1)"
+                                border: "2px solid rgba(255, 255, 255, 0.15)",
+                                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)"
                             },
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: "jsx-d732791046adfab6",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
-                                    margin: 0,
-                                    fontSize: "16px"
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "20px"
                                 },
+                                className: "jsx-d732791046adfab6",
                                 children: [
-                                    filteredStaff.length,
-                                    " membro",
-                                    filteredStaff.length !== 1 ? 's' : '',
-                                    " do staff encontrado",
-                                    filteredStaff.length !== 1 ? 's' : '',
-                                    searchTerm && ` para "${searchTerm}"`
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            display: "flex",
+                                            gap: "15px",
+                                            flexWrap: "wrap"
+                                        },
+                                        className: "jsx-d732791046adfab6",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                                type: "text",
+                                                placeholder: "🔍 Buscar por nome ou posição...",
+                                                value: searchTerm,
+                                                onChange: (e)=>setSearchTerm(e.target.value),
+                                                style: {
+                                                    padding: "14px 20px",
+                                                    borderRadius: "10px",
+                                                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                                                    background: "rgba(0, 0, 0, 0.9)",
+                                                    color: "white",
+                                                    flex: "1",
+                                                    minWidth: "250px",
+                                                    outline: "none",
+                                                    fontSize: "16px",
+                                                    transition: "all 0.3s"
+                                                },
+                                                onFocus: (e)=>e.target.style.borderColor = "#1e88e5",
+                                                onBlur: (e)=>e.target.style.borderColor = "rgba(255, 255, 255, 0.2)",
+                                                className: "jsx-d732791046adfab6"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                lineNumber: 182,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                                                value: positionFilter,
+                                                onChange: (e)=>setPositionFilter(e.target.value),
+                                                style: {
+                                                    padding: "14px 45px 14px 20px",
+                                                    borderRadius: "10px",
+                                                    border: "2px solid rgba(255, 255, 255, 0.3)",
+                                                    background: "rgba(0, 0, 0, 0.9)",
+                                                    color: "white",
+                                                    minWidth: "180px",
+                                                    outline: "none",
+                                                    cursor: "pointer",
+                                                    fontSize: "16px",
+                                                    fontWeight: "500",
+                                                    transition: "all 0.3s",
+                                                    appearance: "none",
+                                                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                                    backgroundRepeat: "no-repeat",
+                                                    backgroundPosition: "right 15px center",
+                                                    backgroundSize: "20px"
+                                                },
+                                                onMouseEnter: (e)=>e.currentTarget.style.borderColor = "#1e88e5",
+                                                onMouseLeave: (e)=>e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)",
+                                                className: "jsx-d732791046adfab6",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "all",
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: " Todas as posições"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 228,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    uniquePositions.map((position, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                            value: position,
+                                                            className: "jsx-d732791046adfab6",
+                                                            children: position
+                                                        }, index, false, {
+                                                            fileName: "[project]/app/[id]/staff/page.tsx",
+                                                            lineNumber: 230,
+                                                            columnNumber: 21
+                                                        }, ("TURBOPACK compile-time value", void 0)))
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                lineNumber: 204,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                                                value: sortBy,
+                                                onChange: (e)=>setSortBy(e.target.value),
+                                                style: {
+                                                    padding: "14px 45px 14px 20px",
+                                                    borderRadius: "10px",
+                                                    border: "2px solid rgba(255, 255, 255, 0.3)",
+                                                    background: "rgba(0, 0, 0, 0.9)",
+                                                    color: "white",
+                                                    minWidth: "180px",
+                                                    outline: "none",
+                                                    cursor: "pointer",
+                                                    fontSize: "16px",
+                                                    fontWeight: "500",
+                                                    transition: "all 0.3s",
+                                                    appearance: "none",
+                                                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                                    backgroundRepeat: "no-repeat",
+                                                    backgroundPosition: "right 15px center",
+                                                    backgroundSize: "20px"
+                                                },
+                                                onMouseEnter: (e)=>e.currentTarget.style.borderColor = "#4ECDC4",
+                                                onMouseLeave: (e)=>e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)",
+                                                className: "jsx-d732791046adfab6",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "name",
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: " Ordenar por nome"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 261,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "favorites",
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: "Ordenar por favoritos"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 262,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0))
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                lineNumber: 237,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                        lineNumber: 181,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            color: "white",
+                                            fontSize: "16px",
+                                            flexWrap: "wrap",
+                                            gap: "15px"
+                                        },
+                                        className: "jsx-d732791046adfab6",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "15px",
+                                                    flexWrap: "wrap"
+                                                },
+                                                className: "jsx-d732791046adfab6",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        style: {
+                                                            color: "#ffffff",
+                                                            background: "rgba(30, 136, 229, 0.2)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px",
+                                                            fontWeight: "bold"
+                                                        },
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: [
+                                                            filteredStaff.length,
+                                                            " membro",
+                                                            filteredStaff.length !== 1 ? 's' : '',
+                                                            " do staff"
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 277,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    searchTerm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        style: {
+                                                            color: "#90caf9",
+                                                            background: "rgba(144, 202, 249, 0.1)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px"
+                                                        },
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: [
+                                                            '"',
+                                                            searchTerm,
+                                                            '"'
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 288,
+                                                        columnNumber: 21
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    positionFilter !== "all" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        style: {
+                                                            color: "#81c784",
+                                                            background: "rgba(129, 199, 132, 0.1)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px"
+                                                        },
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: positionFilter
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 299,
+                                                        columnNumber: 21
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        style: {
+                                                            color: "#ffb74d",
+                                                            background: "rgba(255, 183, 77, 0.1)",
+                                                            padding: "8px 16px",
+                                                            borderRadius: "8px"
+                                                        },
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: [
+                                                            "Página ",
+                                                            currentPage,
+                                                            " de ",
+                                                            totalPages
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                        lineNumber: 309,
+                                                        columnNumber: 19
+                                                    }, ("TURBOPACK compile-time value", void 0))
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                lineNumber: 276,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            (searchTerm || positionFilter !== "all") && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>{
+                                                    setSearchTerm("");
+                                                    setPositionFilter("all");
+                                                    setSortBy("name");
+                                                },
+                                                style: {
+                                                    padding: "10px 20px",
+                                                    background: "linear-gradient(135deg, #ff4444, #cc0000)",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "8px",
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                    fontWeight: "bold",
+                                                    transition: "all 0.3s",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "8px"
+                                                },
+                                                onMouseEnter: (e)=>{
+                                                    e.currentTarget.style.transform = "translateY(-2px)";
+                                                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(255, 68, 68, 0.4)";
+                                                },
+                                                onMouseLeave: (e)=>{
+                                                    e.currentTarget.style.transform = "translateY(0)";
+                                                    e.currentTarget.style.boxShadow = "none";
+                                                },
+                                                className: "jsx-d732791046adfab6",
+                                                children: "Limpar filtros"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                lineNumber: 320,
+                                                columnNumber: 19
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                        lineNumber: 267,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/[id]/staff/page.tsx",
-                                lineNumber: 129,
+                                lineNumber: 175,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/app/[id]/staff/page.tsx",
-                            lineNumber: 120,
+                            lineNumber: 166,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
                                 textAlign: "center",
-                                padding: "60px 20px",
+                                padding: "80px 20px",
                                 background: "rgba(0, 0, 0, 0.7)",
                                 borderRadius: "15px",
-                                backdropFilter: "blur(10px)"
+                                backdropFilter: "blur(10px)",
+                                border: "2px solid rgba(255, 255, 255, 0.1)"
                             },
-                            className: "jsx-7ffbd280658ea1db",
+                            className: "jsx-d732791046adfab6",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     style: {
-                                        width: "60px",
-                                        height: "60px",
-                                        border: "5px solid rgba(255, 255, 255, 0.1)",
-                                        borderTop: "5px solid #1e88e5",
+                                        width: "70px",
+                                        height: "70px",
+                                        border: "6px solid rgba(255, 255, 255, 0.1)",
+                                        borderTop: "6px solid #1e88e5",
                                         borderRadius: "50%",
-                                        margin: "0 auto 20px",
+                                        margin: "0 auto 25px",
                                         animation: "spin 1s linear infinite"
                                     },
-                                    className: "jsx-7ffbd280658ea1db"
+                                    className: "jsx-d732791046adfab6"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 143,
+                                    lineNumber: 366,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     style: {
                                         color: "white",
-                                        fontSize: "18px"
+                                        fontSize: "20px",
+                                        textShadow: "0 2px 4px rgba(0,0,0,0.5)"
                                     },
-                                    className: "jsx-7ffbd280658ea1db",
+                                    className: "jsx-d732791046adfab6",
                                     children: "Carregando staff..."
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 152,
+                                    lineNumber: 375,
                                     columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                    id: "7ffbd280658ea1db",
-                                    children: "@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}"
-                                }, void 0, false, void 0, ("TURBOPACK compile-time value", void 0))
+                                }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[id]/staff/page.tsx",
-                            lineNumber: 136,
+                            lineNumber: 358,
                             columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)) : filteredStaff.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        }, ("TURBOPACK compile-time value", void 0)) : paginatedStaff.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             style: {
                                 textAlign: "center",
-                                padding: "60px 20px",
+                                padding: "80px 20px",
                                 background: "rgba(0, 0, 0, 0.7)",
                                 borderRadius: "15px",
-                                backdropFilter: "blur(10px)"
+                                backdropFilter: "blur(10px)",
+                                border: "2px solid rgba(255, 255, 255, 0.1)"
                             },
+                            className: "jsx-d732791046adfab6",
                             children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        fontSize: "60px",
+                                        marginBottom: "20px"
+                                    },
+                                    className: "jsx-d732791046adfab6",
+                                    children: "😕"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[id]/staff/page.tsx",
+                                    lineNumber: 392,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     style: {
                                         color: "white",
-                                        fontSize: "20px"
+                                        fontSize: "22px",
+                                        marginBottom: "15px",
+                                        fontWeight: "bold"
                                     },
-                                    children: searchTerm ? `Nenhum staff encontrado para "${searchTerm}"` : "Nenhum membro do staff encontrado."
+                                    className: "jsx-d732791046adfab6",
+                                    children: "Nenhum membro do staff encontrado"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 168,
+                                    lineNumber: 393,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
-                                searchTerm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>setSearchTerm(""),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     style: {
-                                        marginTop: "20px",
-                                        padding: "12px 24px",
-                                        background: "rgba(30, 136, 229, 0.9)",
+                                        color: "#aaa",
+                                        fontSize: "16px",
+                                        marginBottom: "30px",
+                                        maxWidth: "600px",
+                                        margin: "0 auto"
+                                    },
+                                    className: "jsx-d732791046adfab6",
+                                    children: searchTerm || positionFilter !== "all" ? `Tente ajustar os filtros de busca.` : "Este anime não possui informações de staff."
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[id]/staff/page.tsx",
+                                    lineNumber: 401,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                (searchTerm || positionFilter !== "all") && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: ()=>{
+                                        setSearchTerm("");
+                                        setPositionFilter("all");
+                                        setSortBy("name");
+                                    },
+                                    style: {
+                                        padding: "14px 28px",
+                                        background: "linear-gradient(135deg, #1e88e5, #0d47a1)",
                                         color: "white",
                                         border: "none",
                                         borderRadius: "10px",
                                         cursor: "pointer",
                                         fontSize: "16px",
                                         fontWeight: "bold",
-                                        transition: "all 0.3s"
+                                        transition: "all 0.3s",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        margin: "0 auto"
                                     },
-                                    onMouseEnter: (e)=>e.currentTarget.style.background = "rgba(30, 136, 229, 1)",
-                                    onMouseLeave: (e)=>e.currentTarget.style.background = "rgba(30, 136, 229, 0.9)",
-                                    children: "Limpar busca"
+                                    onMouseEnter: (e)=>e.currentTarget.style.transform = "scale(1.05)",
+                                    onMouseLeave: (e)=>e.currentTarget.style.transform = "scale(1)",
+                                    className: "jsx-d732791046adfab6",
+                                    children: "Limpar filtros"
                                 }, void 0, false, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 172,
+                                    lineNumber: 413,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[id]/staff/page.tsx",
-                            lineNumber: 161,
+                            lineNumber: 384,
                             columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            style: {
-                                display: "grid",
-                                gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-                                gap: 25
-                            },
-                            children: filteredStaff.map((person)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     style: {
-                                        background: "rgba(0, 0, 0, 0.7)",
-                                        borderRadius: "15px",
-                                        padding: "25px",
-                                        backdropFilter: "blur(10px)",
-                                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                                        transition: "all 0.3s ease",
-                                        cursor: "pointer"
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+                                        gap: 25,
+                                        marginBottom: "40px"
                                     },
-                                    onMouseEnter: (e)=>{
-                                        e.currentTarget.style.transform = "translateY(-5px)";
-                                        e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
-                                        e.currentTarget.style.borderColor = "#1e88e5";
-                                    },
-                                    onMouseLeave: (e)=>{
-                                        e.currentTarget.style.transform = "translateY(0)";
-                                        e.currentTarget.style.boxShadow = "none";
-                                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                                    },
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        style: {
-                                            display: "flex",
-                                            gap: 20,
-                                            alignItems: "flex-start"
-                                        },
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                                                src: person.person.images.jpg.image_url,
-                                                alt: person.person.name,
+                                    className: "jsx-d732791046adfab6",
+                                    children: paginatedStaff.map((person)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            style: {
+                                                background: "rgba(0, 0, 0, 0.7)",
+                                                borderRadius: "15px",
+                                                padding: "25px",
+                                                backdropFilter: "blur(10px)",
+                                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                                transition: "all 0.3s ease",
+                                                cursor: "pointer"
+                                            },
+                                            onMouseEnter: (e)=>{
+                                                e.currentTarget.style.transform = "translateY(-5px)";
+                                                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
+                                                e.currentTarget.style.borderColor = "#1e88e5";
+                                            },
+                                            onMouseLeave: (e)=>{
+                                                e.currentTarget.style.transform = "translateY(0)";
+                                                e.currentTarget.style.boxShadow = "none";
+                                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                            },
+                                            className: "jsx-d732791046adfab6",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 style: {
-                                                    width: "100px",
-                                                    height: "120px",
-                                                    objectFit: "cover",
-                                                    borderRadius: "10px",
-                                                    border: "2px solid #1e88e5"
-                                                }
-                                            }, void 0, false, {
-                                                fileName: "[project]/app/[id]/staff/page.tsx",
-                                                lineNumber: 221,
-                                                columnNumber: 21
-                                            }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                style: {
-                                                    flex: 1
+                                                    display: "flex",
+                                                    gap: 20,
+                                                    alignItems: "flex-start"
                                                 },
+                                                className: "jsx-d732791046adfab6",
                                                 children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                                        src: person.person.images.jpg.image_url,
+                                                        alt: person.person.name,
                                                         style: {
-                                                            color: "white",
-                                                            margin: "0 0 15px 0",
-                                                            fontSize: "20px",
-                                                            fontWeight: "bold"
+                                                            width: "100px",
+                                                            height: "120px",
+                                                            objectFit: "cover",
+                                                            borderRadius: "10px",
+                                                            border: "2px solid #1e88e5"
                                                         },
-                                                        children: person.person.name
+                                                        className: "jsx-d732791046adfab6"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[id]/staff/page.tsx",
-                                                        lineNumber: 233,
+                                                        lineNumber: 472,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         style: {
-                                                            display: "flex",
-                                                            flexWrap: "wrap",
-                                                            gap: 8,
-                                                            marginBottom: 15
+                                                            flex: 1
                                                         },
-                                                        children: person.positions?.map((position, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "jsx-d732791046adfab6",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                                 style: {
-                                                                    background: position.toLowerCase().includes("director") ? "rgba(30, 136, 229, 0.9)" : position.toLowerCase().includes("writer") ? "rgba(67, 160, 71, 0.9)" : position.toLowerCase().includes("producer") ? "rgba(244, 81, 30, 0.9)" : position.toLowerCase().includes("design") ? "rgba(142, 36, 170, 0.9)" : "rgba(85, 85, 85, 0.9)",
                                                                     color: "white",
-                                                                    padding: "6px 12px",
-                                                                    borderRadius: "20px",
-                                                                    fontSize: "13px",
+                                                                    margin: "0 0 15px 0",
+                                                                    fontSize: "20px",
                                                                     fontWeight: "bold"
                                                                 },
-                                                                children: position
-                                                            }, idx, false, {
+                                                                className: "jsx-d732791046adfab6",
+                                                                children: person.person.name
+                                                            }, void 0, false, {
                                                                 fileName: "[project]/app/[id]/staff/page.tsx",
-                                                                lineNumber: 249,
-                                                                columnNumber: 27
-                                                            }, ("TURBOPACK compile-time value", void 0)))
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/app/[id]/staff/page.tsx",
-                                                        lineNumber: 242,
-                                                        columnNumber: 23
-                                                    }, ("TURBOPACK compile-time value", void 0)),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        style: {
-                                                            color: "#aaa",
-                                                            fontSize: "15px"
-                                                        },
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                lineNumber: 484,
+                                                                columnNumber: 25
+                                                            }, ("TURBOPACK compile-time value", void 0)),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 style: {
-                                                                    margin: "8px 0"
+                                                                    display: "flex",
+                                                                    flexWrap: "wrap",
+                                                                    gap: 8,
+                                                                    marginBottom: 15
                                                                 },
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                                className: "jsx-d732791046adfab6",
+                                                                children: person.positions?.map((position, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         style: {
-                                                                            color: "#90caf9"
+                                                                            background: position.toLowerCase().includes("director") ? "rgba(30, 136, 229, 0.9)" : position.toLowerCase().includes("writer") ? "rgba(67, 160, 71, 0.9)" : position.toLowerCase().includes("producer") ? "rgba(244, 81, 30, 0.9)" : position.toLowerCase().includes("design") ? "rgba(142, 36, 170, 0.9)" : "rgba(85, 85, 85, 0.9)",
+                                                                            color: "white",
+                                                                            padding: "6px 12px",
+                                                                            borderRadius: "20px",
+                                                                            fontSize: "13px",
+                                                                            fontWeight: "bold"
                                                                         },
-                                                                        children: "Favoritos:"
-                                                                    }, void 0, false, {
+                                                                        className: "jsx-d732791046adfab6",
+                                                                        children: position
+                                                                    }, idx, false, {
                                                                         fileName: "[project]/app/[id]/staff/page.tsx",
-                                                                        lineNumber: 271,
+                                                                        lineNumber: 500,
+                                                                        columnNumber: 29
+                                                                    }, ("TURBOPACK compile-time value", void 0)))
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                                lineNumber: 493,
+                                                                columnNumber: 25
+                                                            }, ("TURBOPACK compile-time value", void 0)),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                style: {
+                                                                    color: "#aaa",
+                                                                    fontSize: "15px"
+                                                                },
+                                                                className: "jsx-d732791046adfab6",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                        style: {
+                                                                            margin: "8px 0"
+                                                                        },
+                                                                        className: "jsx-d732791046adfab6",
+                                                                        children: [
+                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                                                style: {
+                                                                                    color: "#90caf9"
+                                                                                },
+                                                                                className: "jsx-d732791046adfab6",
+                                                                                children: " Favoritos:"
+                                                                            }, void 0, false, {
+                                                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                                                lineNumber: 522,
+                                                                                columnNumber: 29
+                                                                            }, ("TURBOPACK compile-time value", void 0)),
+                                                                            " ",
+                                                                            person.person.favorites?.toLocaleString() || "N/A"
+                                                                        ]
+                                                                    }, void 0, true, {
+                                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                                        lineNumber: 521,
                                                                         columnNumber: 27
                                                                     }, ("TURBOPACK compile-time value", void 0)),
-                                                                    " ",
-                                                                    person.person.favorites?.toLocaleString() || "N/A"
+                                                                    person.person.website_url && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                                                        href: person.person.website_url,
+                                                                        target: "_blank",
+                                                                        rel: "noopener noreferrer",
+                                                                        style: {
+                                                                            color: "#1e88e5",
+                                                                            textDecoration: "none",
+                                                                            display: "inline-flex",
+                                                                            alignItems: "center",
+                                                                            gap: "5px",
+                                                                            fontWeight: "bold"
+                                                                        },
+                                                                        className: "jsx-d732791046adfab6",
+                                                                        children: "Site Oficial"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/app/[id]/staff/page.tsx",
+                                                                        lineNumber: 525,
+                                                                        columnNumber: 29
+                                                                    }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/[id]/staff/page.tsx",
-                                                                lineNumber: 270,
+                                                                lineNumber: 520,
                                                                 columnNumber: 25
-                                                            }, ("TURBOPACK compile-time value", void 0)),
-                                                            person.person.website_url && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                                                href: person.person.website_url,
-                                                                target: "_blank",
-                                                                rel: "noopener noreferrer",
-                                                                style: {
-                                                                    color: "#1e88e5",
-                                                                    textDecoration: "none",
-                                                                    display: "inline-flex",
-                                                                    alignItems: "center",
-                                                                    gap: "5px",
-                                                                    fontWeight: "bold"
-                                                                },
-                                                                children: "🌐 Site Oficial"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/app/[id]/staff/page.tsx",
-                                                                lineNumber: 274,
-                                                                columnNumber: 27
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/[id]/staff/page.tsx",
-                                                        lineNumber: 269,
+                                                        lineNumber: 483,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[id]/staff/page.tsx",
-                                                lineNumber: 232,
+                                                lineNumber: 471,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/app/[id]/staff/page.tsx",
-                                        lineNumber: 220,
-                                        columnNumber: 19
-                                    }, ("TURBOPACK compile-time value", void 0))
-                                }, person.person.mal_id, false, {
+                                        }, person.person.mal_id, false, {
+                                            fileName: "[project]/app/[id]/staff/page.tsx",
+                                            lineNumber: 451,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)))
+                                }, void 0, false, {
                                     fileName: "[project]/app/[id]/staff/page.tsx",
-                                    lineNumber: 200,
+                                    lineNumber: 444,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                totalPages > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    style: {
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        flexWrap: "wrap",
+                                        marginBottom: "40px",
+                                        padding: "25px",
+                                        background: "rgba(0, 0, 0, 0.7)",
+                                        borderRadius: "15px",
+                                        border: "2px solid rgba(255, 255, 255, 0.1)"
+                                    },
+                                    className: "jsx-d732791046adfab6",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: ()=>handlePageChange(currentPage - 1),
+                                            disabled: currentPage === 1,
+                                            style: {
+                                                padding: "12px 25px",
+                                                background: currentPage === 1 ? "rgba(255, 255, 255, 0.1)" : "linear-gradient(135deg, #1e88e5, #0d47a1)",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                                                fontWeight: "bold",
+                                                fontSize: "16px",
+                                                opacity: currentPage === 1 ? 0.5 : 1,
+                                                transition: "all 0.3s"
+                                            },
+                                            className: "jsx-d732791046adfab6",
+                                            children: "← Anterior"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[id]/staff/page.tsx",
+                                            lineNumber: 562,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        Array.from({
+                                            length: Math.min(5, totalPages)
+                                        }, (_, i)=>{
+                                            let pageNum;
+                                            if (totalPages <= 5) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage <= 3) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage >= totalPages - 2) {
+                                                pageNum = totalPages - 4 + i;
+                                            } else {
+                                                pageNum = currentPage - 2 + i;
+                                            }
+                                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>handlePageChange(pageNum),
+                                                style: {
+                                                    padding: "12px 18px",
+                                                    minWidth: "45px",
+                                                    background: currentPage === pageNum ? "linear-gradient(135deg, #4ECDC4, #1CE669)" : "rgba(255, 255, 255, 0.1)",
+                                                    color: "white",
+                                                    border: currentPage === pageNum ? "2px solid #ffffff" : "1px solid rgba(255, 255, 255, 0.3)",
+                                                    borderRadius: "8px",
+                                                    cursor: "pointer",
+                                                    fontWeight: "bold",
+                                                    fontSize: "16px",
+                                                    transition: "all 0.3s"
+                                                },
+                                                onMouseEnter: (e)=>{
+                                                    if (currentPage !== pageNum) {
+                                                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
+                                                    }
+                                                },
+                                                className: "jsx-d732791046adfab6",
+                                                children: pageNum
+                                            }, pageNum, false, {
+                                                fileName: "[project]/app/[id]/staff/page.tsx",
+                                                lineNumber: 596,
+                                                columnNumber: 23
+                                            }, ("TURBOPACK compile-time value", void 0));
+                                        }),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: ()=>handlePageChange(currentPage + 1),
+                                            disabled: currentPage === totalPages,
+                                            style: {
+                                                padding: "12px 25px",
+                                                background: currentPage === totalPages ? "rgba(255, 255, 255, 0.1)" : "linear-gradient(135deg, #FF6B6B, #FF8E53)",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                                                fontWeight: "bold",
+                                                fontSize: "16px",
+                                                opacity: currentPage === totalPages ? 0.5 : 1,
+                                                transition: "all 0.3s"
+                                            },
+                                            className: "jsx-d732791046adfab6",
+                                            children: "Próxima →"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[id]/staff/page.tsx",
+                                            lineNumber: 626,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            style: {
+                                                color: "#ffffff",
+                                                fontSize: "16px",
+                                                marginLeft: "20px",
+                                                background: "rgba(0, 0, 0, 0.5)",
+                                                padding: "10px 20px",
+                                                borderRadius: "8px",
+                                                border: "1px solid rgba(255, 255, 255, 0.2)"
+                                            },
+                                            className: "jsx-d732791046adfab6",
+                                            children: [
+                                                "Página ",
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    style: {
+                                                        color: "#4ECDC4",
+                                                        fontWeight: "bold"
+                                                    },
+                                                    className: "jsx-d732791046adfab6",
+                                                    children: currentPage
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[id]/staff/page.tsx",
+                                                    lineNumber: 656,
+                                                    columnNumber: 28
+                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                " de ",
+                                                totalPages
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/app/[id]/staff/page.tsx",
+                                            lineNumber: 647,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/app/[id]/staff/page.tsx",
+                                    lineNumber: 550,
                                     columnNumber: 17
-                                }, ("TURBOPACK compile-time value", void 0)))
-                        }, void 0, false, {
-                            fileName: "[project]/app/[id]/staff/page.tsx",
-                            lineNumber: 194,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0))
+                                }, ("TURBOPACK compile-time value", void 0))
+                            ]
+                        }, void 0, true)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/[id]/staff/page.tsx",
-                    lineNumber: 63,
+                    lineNumber: 111,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/app/[id]/staff/page.tsx",
-                lineNumber: 62,
+                lineNumber: 110,
                 columnNumber: 7
-            }, ("TURBOPACK compile-time value", void 0))
+            }, ("TURBOPACK compile-time value", void 0)),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                id: "d732791046adfab6",
+                children: "@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}"
+            }, void 0, false, void 0, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true);
 };
-_s(StaffPage, "LAdIXPSA3pd5cMWh6j5iQuF16+w=", false, function() {
+_s(StaffPage, "5ahsRO+jwSKV6lOU/g5jwmlmIeU=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
